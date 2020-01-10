@@ -39,6 +39,7 @@ export function createGlobalStyles(initialState = {}) {
 
 	const addPlugin = (plugin) => {
 		plugins.push(plugin);
+		transformers.push(plugin);
 		render();
 	};
 
