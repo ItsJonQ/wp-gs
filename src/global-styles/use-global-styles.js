@@ -1,19 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { globalStyles } from './global-styles';
 
 export function useGlobalStyles() {
-	const [, setState] = useState(globalStyles.getState());
-
-	useEffect(() => {
-		const callback = () => {
-			setState(globalStyles.getState());
-		};
-		globalStyles.subscribe(callback);
-
-		return () => {
-			globalStyles.unsubscribe(callback);
-		};
-	}, [setState]);
+	const html = globalStyles.getHtmlString();
+	useEffect(() => {}, [html]);
 
 	return globalStyles;
 }
