@@ -1,31 +1,21 @@
-import { kebabCase, set, unset, isObject, isString, isUndefined } from 'lodash';
-import merge from 'deepmerge';
-export { default as merge } from 'deepmerge';
+import { set, unset, isObject, isString, isUndefined } from 'lodash';
+import broadcaster from 'mitt';
 
-export const defaultTheme = {
-	colors: {
-		text: '#000',
-		background: '#fff',
-		primary: '#07c',
-	},
-	fonts: {
-		body: 'system-ui, sans-serif',
-	},
-	fontSizes: {
-		base: 16,
-	},
-	fontScale: 1.1,
-};
+import { defaultTheme } from './themes';
+import { cssVariableTransformer } from './transformers';
+import { merge } from './utils';
 
-export function createGlobalStyles(initialState = defaultTheme) {
+export function createGlobalStyles(initialState = {}) {
 	const state = {};
-	const defaultState = initialState;
+	const defaultState = merge(defaultTheme, initialState);
 	const themeState = {};
 	const userState = {};
 	const variables = {};
 
 	const plugins = [];
 	const transformers = [];
+
+	const broadcast = broadcaster();
 
 	const getState = () => ({ ...state });
 	const getVariables = () => ({ ...variables });
@@ -43,6 +33,8 @@ export function createGlobalStyles(initialState = defaultTheme) {
 
 		Object.assign(state, nextState);
 		Object.assign(variables, nextVariables);
+
+		broadcast.emit('UPDATE_STATE', state);
 	};
 
 	const addPlugin = (plugin) => {
@@ -81,7 +73,26 @@ export function createGlobalStyles(initialState = defaultTheme) {
 		render();
 	};
 
-	const getHTMLString = () => {
+	const getCssString = () => {
+		const template = [];
+		const vars = getVariables();
+		const keys = Object.keys(vars);
+
+		template.push(`:root {`);
+
+		keys.forEach((key) => {
+			const value = vars[key];
+			template.push(`  ${key}: ${value};`);
+		});
+
+		template.push(`}`);
+
+		const css = template.join('\n');
+
+		return css;
+	};
+
+	const getHtmlString = () => {
 		const template = [];
 		const vars = getVariables();
 		const keys = Object.keys(vars);
@@ -102,6 +113,14 @@ export function createGlobalStyles(initialState = defaultTheme) {
 		return html;
 	};
 
+	const subscribe = (callback) => {
+		broadcast.on('UPDATE_STATE', callback);
+	};
+
+	const unsubscribe = (callback) => {
+		broadcast.off('UPDATE_STATE', callback);
+	};
+
 	/**
 	 * Default transformers
 	 */
@@ -115,7 +134,10 @@ export function createGlobalStyles(initialState = defaultTheme) {
 		setProps,
 		unsetProps,
 		getVariables,
-		getHTMLString,
+		getHtmlString,
+		getCssString,
+		subscribe,
+		unsubscribe,
 	};
 }
 
@@ -129,44 +151,4 @@ export function composeState(fns = []) {
 			}
 		}, state);
 	};
-}
-
-function flattenObject(ob) {
-	let toReturn = {};
-
-	for (let i in ob) {
-		if (!ob.hasOwnProperty(i)) continue;
-
-		if (typeof ob[i] == 'object' && ob[i] !== null) {
-			let flatObject = flattenObject(ob[i]);
-			for (let x in flatObject) {
-				if (!flatObject.hasOwnProperty(x)) continue;
-				toReturn[i + '.' + x] = flatObject[x];
-			}
-		} else {
-			toReturn[i] = ob[i];
-		}
-	}
-
-	return toReturn;
-}
-
-function cssVariableTransformer(state) {
-	const flattenedState = flattenObject(state);
-	const keys = Object.keys(flattenedState);
-
-	const cssVariableData = keys.reduce((data, key) => {
-		const value = flattenedState[key];
-		const renamedKey = kebabCase(key);
-		const prefix = '--wp-gs';
-
-		const enhancedKey = `${prefix}-${renamedKey}`;
-
-		return {
-			...data,
-			[enhancedKey]: value,
-		};
-	}, {});
-
-	return cssVariableData;
 }

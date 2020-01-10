@@ -1,4 +1,4 @@
-import { merge, createGlobalStyles } from './global-styles';
+import { merge, createGlobalStyles } from '../index';
 import colorize from 'tinycolor2';
 
 const customTheme = {
@@ -58,7 +58,6 @@ test('Does a thing', () => {
 		},
 	});
 
-	gs.unsetProps('button.backgroundColor');
 	gs.setProps('button.backgroundColor', 'red');
 
 	console.log(gs.getHTMLString());
