@@ -1,33 +1,33 @@
-import { useEffect } from 'react'
-import { globalStyles } from './global-styles'
+import { useEffect } from "react";
+import { globalStyles } from "./global-styles";
 
 export function useGlobalStyles() {
-  const html = globalStyles.getHtmlString()
-  useEffect(() => {}, [html])
+	const html = globalStyles.getHtmlString();
+	useEffect(() => {}, [html]);
 
-  return globalStyles
+	return globalStyles;
 }
 
 export function useGlobalStylesState() {
-  const globalStyles = useGlobalStyles()
+	const globalStyles = useGlobalStyles();
 
-  return globalStyles.getState()
+	return globalStyles.getState();
 }
 
 export function useGlobalStylesVariables() {
-  const globalStyles = useGlobalStyles()
+	const globalStyles = useGlobalStyles();
 
-  return globalStyles.getVariables()
+	return globalStyles.getVariables();
 }
 
 export function useGlobalStylesCssString() {
-  const globalStyles = useGlobalStyles()
+	const globalStyles = useGlobalStyles();
 
-  return globalStyles.getCssString()
+	return globalStyles.getCssString();
 }
 
 export function useGlobalStylesHtmlString() {
-  const globalStyles = useGlobalStyles()
+	const globalStyles = useGlobalStyles();
 
-  return globalStyles.getHtmlString()
+	return globalStyles.getHtmlString();
 }
