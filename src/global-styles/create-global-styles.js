@@ -1,155 +1,168 @@
-import { set, unset, isObject, isString, isUndefined } from 'lodash';
-import broadcaster from 'mitt';
+import { set, unset, isObject, isString, isUndefined, isFunction } from 'lodash'
+import broadcaster from 'mitt'
 
-import { defaultTheme } from './themes';
-import { cssVariableTransformer } from './transformers';
-import { merge } from './utils';
+import { defaultTheme } from './themes'
+import { cssVariableTransformer } from './transformers'
+import { merge, equal } from './utils'
 
 export function createGlobalStyles(initialState = {}) {
-	const state = {};
-	const defaultState = merge(defaultTheme, initialState);
-	const themeState = {};
-	const userState = {};
-	const variables = {};
+  const state = {}
+  const defaultState = merge(defaultTheme, initialState)
+  const themeState = {}
+  const userState = {}
+  const variables = {}
 
-	const plugins = [];
-	const transformers = [];
+  const plugins = []
+  const transformers = []
 
-	const broadcast = broadcaster();
+  const broadcast = broadcaster()
 
-	const getState = () => ({ ...state });
-	const getVariables = () => ({ ...variables });
+  const getState = () => ({ ...state })
+  const getVariables = () => ({ ...variables })
 
-	const composeStateWithPlugins = composeState(plugins);
-	const composeVariablesWithTransformers = composeState(transformers);
+  const composeStateWithPlugins = composeState(plugins)
+  const composeVariablesWithTransformers = composeState(transformers)
 
-	const render = () => {
-		const precomposedState = merge(defaultState, themeState);
-		const composedState = composeStateWithPlugins(precomposedState);
-		const mergedState = merge(composedState, themeState);
+  const render = () => {
+    const precomposedState = merge(defaultState, themeState)
+    const composedState = composeStateWithPlugins(precomposedState)
+    const mergedState = merge(composedState, themeState)
 
-		const nextState = merge(mergedState, userState);
-		const nextVariables = composeVariablesWithTransformers(nextState);
+    const nextState = merge(mergedState, userState)
+    const nextVariables = composeVariablesWithTransformers(nextState)
 
-		Object.assign(state, nextState);
-		Object.assign(variables, nextVariables);
+    applyNextState(state, nextState, () => {
+      applyNextState(variables, nextVariables)
+      broadcast.emit('UPDATE_STATE', state)
+    })
+  }
 
-		broadcast.emit('UPDATE_STATE', state);
-	};
+  const addPlugin = plugin => {
+    plugins.push(plugin)
+    transformers.push(plugin)
+    render()
+  }
 
-	const addPlugin = (plugin) => {
-		plugins.push(plugin);
-		transformers.push(plugin);
-		render();
-	};
+  const addTransformer = transformer => {
+    transformers.push(transformer)
+    render()
+  }
 
-	const addTransformer = (transformer) => {
-		transformers.push(transformer);
-		render();
-	};
+  const apply = (nextThemeState = {}) => {
+    applyNextState(themeState, nextThemeState, render)
+  }
 
-	const apply = (nextThemeState = {}) => {
-		Object.assign(themeState, nextThemeState);
-		render();
-	};
+  const setProps = (nextUserState = {}, setValue) => {
+    let nextState = { ...userState }
 
-	const setProps = (nextUserState = {}, setValue) => {
-		let nextState = { ...userState };
+    if (isString(nextUserState) && !isUndefined(setValue)) {
+      nextState = set(nextState, nextUserState, setValue)
+    }
+    if (isObject(nextUserState)) {
+      nextState = merge(nextState, nextUserState)
+    }
 
-		if (isString(nextUserState) && !isUndefined(setValue)) {
-			nextState = set(nextState, nextUserState, setValue);
-		}
-		if (isObject(nextUserState)) {
-			nextState = merge(nextState, nextUserState);
-		}
+    applyNextState(userState, nextState, render)
+  }
 
-		Object.assign(userState, nextState);
-		render();
-	};
+  const unsetProps = unsetUserState => {
+    if (!isString(unsetUserState)) return
 
-	const unsetProps = (nextUserState) => {
-		if (!isString(nextUserState)) return;
+    const nextUserState = unset(userState, unsetUserState)
 
-		Object.assign(userState, unset(userState, nextUserState));
-		render();
-	};
+    applyNextState(userState, nextUserState, render)
+  }
 
-	const getCssString = () => {
-		const template = [];
-		const vars = getVariables();
-		const keys = Object.keys(vars);
+  const getCssString = () => {
+    const template = []
+    const vars = getVariables()
+    const keys = Object.keys(vars)
 
-		template.push(`:root {`);
+    template.push(`:root {`)
 
-		keys.forEach((key) => {
-			const value = vars[key];
-			template.push(`  ${key}: ${value};`);
-		});
+    keys.forEach(key => {
+      const value = vars[key]
+      template.push(`  ${key}: ${value};`)
+    })
 
-		template.push(`}`);
+    template.push(`}`)
 
-		const css = template.join('\n');
+    const css = template.join('\n')
 
-		return css;
-	};
+    return css
+  }
 
-	const getHtmlString = () => {
-		const template = [];
-		const vars = getVariables();
-		const keys = Object.keys(vars);
+  const getHtmlString = () => {
+    const template = []
+    const vars = getVariables()
+    const keys = Object.keys(vars)
 
-		template.push(`<style>`);
-		template.push(`  :root {`);
+    template.push(`<style>`)
+    template.push(`  :root {`)
 
-		keys.forEach((key) => {
-			const value = vars[key];
-			template.push(`    ${key}: ${value};`);
-		});
+    keys.forEach(key => {
+      const value = vars[key]
+      template.push(`    ${key}: ${value};`)
+    })
 
-		template.push(`  }`);
-		template.push(`</style>`);
+    template.push(`  }`)
+    template.push(`</style>`)
 
-		const html = template.join('\n');
+    const html = template.join('\n')
 
-		return html;
-	};
+    return html
+  }
 
-	const subscribe = (callback) => {
-		broadcast.on('UPDATE_STATE', callback);
-	};
+  const subscribe = callback => {
+    if (isFunction(callback)) {
+      broadcast.on('UPDATE_STATE', callback)
+    }
+  }
 
-	const unsubscribe = (callback) => {
-		broadcast.off('UPDATE_STATE', callback);
-	};
+  const unsubscribe = callback => {
+    if (isFunction(callback)) {
+      broadcast.off('UPDATE_STATE', callback)
+    }
+  }
 
-	/**
-	 * Default transformers
-	 */
-	addTransformer(cssVariableTransformer);
+  /**
+   * Default transformers
+   */
+  addTransformer(cssVariableTransformer)
 
-	return {
-		getState,
-		addPlugin,
-		addTransformer,
-		apply,
-		setProps,
-		unsetProps,
-		getVariables,
-		getHtmlString,
-		getCssString,
-		subscribe,
-		unsubscribe,
-	};
+  return {
+    getState,
+    addPlugin,
+    addTransformer,
+    apply,
+    setProps,
+    unsetProps,
+    getVariables,
+    getHtmlString,
+    getCssString,
+    subscribe,
+    unsubscribe,
+  }
 }
 
-export function composeState(fns = []) {
-	return (state) => {
-		return fns.reduceRight((nextState, fn) => {
-			try {
-				return fn(nextState);
-			} catch {
-				return nextState;
-			}
-		}, state);
-	};
+function composeState(fns = []) {
+  return state => {
+    return fns.reduceRight((nextState, fn) => {
+      try {
+        return fn(nextState)
+      } catch {
+        return nextState
+      }
+    }, state)
+  }
+}
+
+function applyNextState(prevState = {}, nextState = {}, callback) {
+  if (!equal(prevState, nextState)) {
+    Object.assign(prevState, nextState)
+
+    if (isFunction(callback)) {
+      callback(nextState)
+    }
+  }
 }
