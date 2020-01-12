@@ -38,12 +38,9 @@ function useFontControls() {
 		}),
 	};
 
-	useEffect(
-		() => {
-			globalStyles.setProps(config);
-		},
-		[config]
-	);
+	useEffect(() => {
+		globalStyles.setProps(config);
+	}, [config]);
 }
 
 function useColorControls() {
@@ -59,14 +56,11 @@ function useColorControls() {
 		};
 	}, {});
 
-	useEffect(
-		() => {
-			globalStyles.setProps({
-				colors: configColors,
-			});
-		},
-		[configColors]
-	);
+	useEffect(() => {
+		globalStyles.setProps({
+			colors: configColors,
+		});
+	}, [configColors]);
 }
 
 const loggerPlugin = state => {
