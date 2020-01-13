@@ -143,12 +143,17 @@ export function createGlobalStyles(initialState = {}) {
 		}
 	};
 
+	const __getThemeState = () => ({ ...themeState });
+	const __getUserState = () => ({ ...userState });
+
 	/**
 	 * Default transformers
 	 */
 	addTransformer(cssVariableTransformer);
 
 	return {
+		__getThemeState,
+		__getUserState,
 		getState,
 		addPlugin,
 		addTransformer,

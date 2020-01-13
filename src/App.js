@@ -1,7 +1,6 @@
 import React from "react";
 import { Controls } from "@itsjonq/controls";
 import { globalStyles, useInjectGlobalStyles } from "./global-styles";
-import sampleTheme from "./wp-content/themes/glob/theme.json";
 import { SwatchesBlock } from "./blocks/swatches";
 import { TypographyBlock } from "./blocks/typography";
 import { useKnobs } from "./knobs";
@@ -11,7 +10,7 @@ import { GlobalStylesInspector, Section } from "./components";
 /**
  * Bootstrap Theme
  */
-// globalStyles.apply(sampleTheme);
+// import "./load-theme";
 
 /**
  * Load the app

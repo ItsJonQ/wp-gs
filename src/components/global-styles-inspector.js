@@ -4,9 +4,9 @@ import { View } from "@itsjonq/elm";
 import {
 	useGlobalStylesCssString,
 	useGlobalStylesState,
+	useGlobalStyles,
 	defaultTheme,
 } from "../global-styles";
-import sampleTheme from "../wp-content/themes/glob/theme.json";
 
 export function GlobalStylesInspector() {
 	const [show, setShow] = useState(false);
@@ -90,7 +90,10 @@ function DefaultThemePanel() {
 }
 
 function ThemePanel() {
-	return <JSONPanel data={sampleTheme} title="Theme: Custom" />;
+	const globalStyles = useGlobalStyles();
+	const themeData = globalStyles.__getThemeState();
+
+	return <JSONPanel data={themeData} title="Theme: Custom" />;
 }
 
 function UserConfigPanel() {
