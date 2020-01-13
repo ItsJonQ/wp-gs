@@ -1,29 +1,27 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useGlobalStylesCssString } from "./use-global-styles";
 
 export function useInjectGlobalStyles() {
 	const html = useGlobalStylesCssString();
-	const styleNodeRef = useRef();
 
 	useEffect(() => {
-		if (!styleNodeRef.current) {
-			styleNodeRef.current = document.createElement("style");
-			styleNodeRef.current.setAttribute("data-wp-gs", "");
+		let node = document.querySelector("style[data-wp-gs");
+		if (!node) {
+			node = document.createElement("style");
+			node.setAttribute("data-wp-gs", "");
 
-			document
-				.getElementsByTagName("head")[0]
-				.appendChild(styleNodeRef.current);
+			document.getElementsByTagName("head")[0].appendChild(node);
 		}
-		styleNodeRef.current.innerHTML = html;
-	}, [html, styleNodeRef]);
+		node.innerHTML = html;
+	}, [html]);
 
 	useEffect(() => {
 		return () => {
-			if (styleNodeRef.current) {
-				styleNodeRef.current.parentElement.removeChild(
-					styleNodeRef.current
-				);
+			const node = document.querySelector("style[data-wp-gs");
+
+			if (node) {
+				node.parentElement.removeChild(node);
 			}
 		};
-	}, [styleNodeRef]);
+	}, []);
 }
