@@ -4,6 +4,9 @@ export * from "./utils";
 // Factory
 export * from "./create-global-styles";
 
+// Theme
+export * from "./themes";
+
 // Instance
 export * from "./global-styles";
 

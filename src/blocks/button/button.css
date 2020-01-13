@@ -1,0 +1,31 @@
+.wp-block-button {
+	box-sizing: border-box;
+	border: 1px solid var(--wp-gs-color-primary-dark20);
+	display: inline-flex;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+		"Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+		"Helvetica Neue", sans-serif;
+	line-height: 1.2;
+	font-weight: bold;
+	text-decoration: none;
+	cursor: pointer;
+
+	background-color: var(--wp-gs-button-backgroundColor);
+	border-radius: var(--wp-gs-button-borderRadius);
+	border-width: var(--wp-gs-button-borderSize);
+	box-shadow: var(--wp-gs-button-dropShadow);
+	color: var(--wp-gs-button-textColor);
+	padding: var(--wp-gs-button-padding);
+}
+
+.wp-block-button:hover {
+	background-color: var(--wp-gs-button-backgroundColorHover);
+}
+.wp-block-button:active {
+	background-color: var(--wp-gs-button-backgroundColorActive);
+}
+
+.wp-block-button a {
+	color: currentColor;
+	text-decoration: none;
+}

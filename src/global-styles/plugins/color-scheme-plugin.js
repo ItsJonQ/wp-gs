@@ -7,22 +7,41 @@ export function colorSchemePlugin(state) {
 
 	const colorVariants = keys.reduce((colorScheme, key) => {
 		const value = colors[key];
-		const colorData = colorize(value);
 		const isDark = colorize.isReadable("white", value);
 		const text = isDark ? "#ffffff" : "#000000";
 
 		const variants = {
 			base: value,
-			rgba10: colorData.setAlpha(0.1).toRgbString(),
-			rgba20: colorData.setAlpha(0.2).toRgbString(),
-			rgba50: colorData.setAlpha(0.5).toRgbString(),
-			rgba70: colorData.setAlpha(0.7).toRgbString(),
-			light10: colorData.lighten(5).toHexString(),
-			light20: colorData.lighten(10).toHexString(),
-			light30: colorData.lighten(15).toHexString(),
-			dark10: colorData.darken(5).toHexString(),
-			dark20: colorData.darken(10).toHexString(),
-			dark30: colorData.darken(15).toHexString(),
+			rgba10: colorize(value)
+				.setAlpha(0.1)
+				.toRgbString(),
+			rgba20: colorize(value)
+				.setAlpha(0.2)
+				.toRgbString(),
+			rgba50: colorize(value)
+				.setAlpha(0.5)
+				.toRgbString(),
+			rgba70: colorize(value)
+				.setAlpha(0.7)
+				.toRgbString(),
+			light10: colorize(value)
+				.lighten(5)
+				.toHexString(),
+			light20: colorize(value)
+				.lighten(10)
+				.toHexString(),
+			light30: colorize(value)
+				.lighten(15)
+				.toHexString(),
+			dark10: colorize(value)
+				.darken(5)
+				.toHexString(),
+			dark20: colorize(value)
+				.darken(10)
+				.toHexString(),
+			dark30: colorize(value)
+				.darken(15)
+				.toHexString(),
 			text,
 		};
 

@@ -1,66 +1,40 @@
-import React, { useEffect } from "react";
-import { Controls, useControls } from "@itsjonq/controls";
-import {
-	globalStyles,
-	useGlobalStylesState,
-	useInjectGlobalStyles,
-} from "./global-styles";
+import React from "react";
+import { Controls } from "@itsjonq/controls";
+import { globalStyles, useInjectGlobalStyles } from "./global-styles";
+import sampleTheme from "./wp-content/themes/glob/theme.json";
+import { SwatchesBlock } from "./blocks/swatches";
 import { TypographyBlock } from "./blocks/typography";
+import { useKnobs } from "./knobs";
+import { ButtonBlock } from "./blocks/button";
+import { GlobalStylesInspector, Section } from "./components";
 
+/**
+ * Bootstrap Theme
+ */
+// globalStyles.apply(sampleTheme);
+
+/**
+ * Load the app
+ */
 function App() {
-	useColorControls();
-	useFontControls();
 	useInjectGlobalStyles();
+	useKnobs();
 
 	return (
 		<div className="App">
-			<Controls title="Global Styles" />
-			<TypographyBlock />
+			<Controls title="Global Styles" top={48} />
+			<Section title="Button (Block)">
+				<ButtonBlock />
+			</Section>
+			<Section title="Typography (Preview)">
+				<TypographyBlock />
+			</Section>
+			<Section title="Colors (Preview)">
+				<SwatchesBlock />
+			</Section>
+			<GlobalStylesInspector />
 		</div>
 	);
-}
-
-function useFontControls() {
-	const globalStylesState = useGlobalStylesState();
-	const { range } = useControls();
-
-	const config = {
-		fontSizes: {
-			base: range("fontSizes.base", globalStylesState.fontSizes.base, {
-				min: 11,
-				max: 21,
-			}),
-		},
-		fontScale: range("fontScale", globalStylesState.fontScale, {
-			min: 1.1,
-			max: 1.45,
-			step: 0.05,
-		}),
-	};
-
-	useEffect(() => {
-		globalStyles.setProps(config);
-	}, [config]);
-}
-
-function useColorControls() {
-	const globalStylesState = useGlobalStylesState();
-	const { color } = useControls();
-	const colors = globalStylesState.colors || {};
-
-	const configColors = Object.keys(colors).reduce((collection, key) => {
-		const value = globalStylesState.colors[key];
-		return {
-			...collection,
-			[key]: color(`colors.${key}`, value),
-		};
-	}, {});
-
-	useEffect(() => {
-		globalStyles.setProps({
-			colors: configColors,
-		});
-	}, [configColors]);
 }
 
 const loggerPlugin = state => {

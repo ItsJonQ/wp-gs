@@ -1,6 +1,7 @@
 import {
 	set,
 	unset,
+	isEmpty,
 	isObject,
 	isString,
 	isUndefined,
@@ -15,8 +16,8 @@ import { merge, equal } from "./utils";
 export function createGlobalStyles(initialState = {}) {
 	const state = {};
 	const defaultState = merge(defaultTheme, initialState);
-	const themeState = {};
-	const userState = {};
+	let themeState = {};
+	let userState = {};
 	const variables = {};
 
 	const plugins = [];
@@ -56,7 +57,9 @@ export function createGlobalStyles(initialState = {}) {
 	};
 
 	const apply = (nextThemeState = {}) => {
-		applyNextState(themeState, nextThemeState, render);
+		applyNextState(themeState, nextThemeState, render, {
+			assign: () => (themeState = nextThemeState),
+		});
 	};
 
 	const setProps = (nextUserState = {}, setValue) => {
@@ -72,12 +75,20 @@ export function createGlobalStyles(initialState = {}) {
 		applyNextState(userState, nextState, render);
 	};
 
-	const unsetProps = unsetUserState => {
-		if (!isString(unsetUserState)) return;
+	const unsetProps = (unsetUserState = "") => {
+		let nextUserState;
 
-		const nextUserState = unset(userState, unsetUserState);
-
-		applyNextState(userState, nextUserState, render);
+		if (isEmpty(unsetUserState)) {
+			nextUserState = {};
+			applyNextState(userState, nextUserState, render, {
+				assign: () => (userState = nextUserState),
+			});
+		} else {
+			if (isString(unsetUserState)) {
+				nextUserState = unset(userState, unsetUserState);
+				applyNextState(userState, nextUserState, render);
+			}
+		}
 	};
 
 	const getCssString = () => {
@@ -164,9 +175,19 @@ function composeState(fns = []) {
 	};
 }
 
-function applyNextState(prevState = {}, nextState = {}, callback) {
+function defaultAssign(prev, next) {
+	Object.assign(prev, next);
+}
+
+function applyNextState(prevState = {}, nextState = {}, callback, props = {}) {
+	const defaultProps = {
+		assign: defaultAssign,
+	};
+	const mergedProps = { ...defaultProps, ...props };
+	const { assign } = mergedProps;
+
 	if (!equal(prevState, nextState)) {
-		Object.assign(prevState, nextState);
+		assign(prevState, nextState);
 
 		if (isFunction(callback)) {
 			callback(nextState);
