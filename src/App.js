@@ -8,13 +8,13 @@ import {
 import { TypographyBlock } from "./blocks/typography";
 
 function App() {
-	useInjectGlobalStyles();
 	useColorControls();
 	useFontControls();
+	useInjectGlobalStyles();
 
 	return (
 		<div className="App">
-			<Controls />
+			<Controls title="Global Styles" />
 			<TypographyBlock />
 		</div>
 	);

@@ -1,9 +1,25 @@
-import { useEffect } from "react";
+import { useCallback, useRef, useEffect, useState } from "react";
 import { globalStyles } from "./global-styles";
 
 export function useGlobalStyles() {
-	const html = globalStyles.getHtmlString();
-	useEffect(() => {}, [html]);
+	const [, setState] = useState("");
+	const prevState = useRef("");
+
+	const updateState = useCallback(() => {
+		const nextState = globalStyles.getHtmlString();
+		if (prevState.current !== nextState) {
+			setState(nextState);
+			prevState.current = nextState;
+		}
+	}, [setState, prevState]);
+
+	useEffect(() => {
+		globalStyles.subscribe(updateState);
+
+		return () => {
+			globalStyles.unsubscribe(updateState);
+		};
+	}, [updateState]);
 
 	return globalStyles;
 }
