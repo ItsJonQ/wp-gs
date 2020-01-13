@@ -10,7 +10,7 @@ import { GlobalStylesInspector, Section } from "./components";
 /**
  * Bootstrap Theme
  */
-// import "./load-theme";
+import "./load-theme";
 
 /**
  * Load the app

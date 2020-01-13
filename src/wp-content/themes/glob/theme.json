@@ -5,5 +5,8 @@
         "text": "red",
         "custom1": "purple",
         "custom2": "green"
+    },
+    "button": {
+        "backgroundColor": "blue"
     }
 }

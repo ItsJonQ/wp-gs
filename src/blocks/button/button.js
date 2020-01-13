@@ -6,6 +6,7 @@ import { defaultStyles } from "./styles";
 import "./button.css";
 
 // Register
+globalStyles.setProps({ button: defaultStyles });
 globalStyles.addTransformer(buttonBlockTransformer);
 
 export function ButtonBlock({ children = "Hello", ...props }) {
@@ -24,27 +25,29 @@ export function ButtonBlock({ children = "Hello", ...props }) {
 
 function useButtonControls() {
 	const globalStylesState = useGlobalStylesState();
+	const { colors } = globalStylesState;
 	const { boolean, range, color } = useControls();
 
-	const { backgroundColor } = globalStylesState.button || {};
+	const button = globalStylesState.button || {};
 
 	const config = {
-		// backgroundColor: color("button.backgroundColor", backgroundColor),
-		borderRadius: range("button.borderRadius", defaultStyles.borderRadius, {
+		backgroundColor: color(
+			"button.backgroundColor",
+			button.backgroundColor || colors.primary
+		),
+		borderRadius: range("button.borderRadius", button.borderRadius, {
 			min: 0,
 			max: 20,
 		}),
-		dropShadow: range("button.dropShadow", defaultStyles.dropShadow, {
+		dropShadow: range("button.dropShadow", button.dropShadow, {
 			min: 0,
 			max: 10,
 		}),
-		padding: range("button.padding", defaultStyles.padding, {
+		padding: range("button.padding", button.padding, {
 			min: 1,
 			max: 10,
 		}),
-		borderSize: boolean("button.showBorder", defaultStyles.showBorder)
-			? 1
-			: 0,
+		borderSize: boolean("button.showBorder", button.showBorder) ? 1 : 0,
 	};
 
 	useEffect(() => {
