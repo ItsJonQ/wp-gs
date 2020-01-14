@@ -313,9 +313,11 @@ function HierarchyStack() {
 	} = useAppContext();
 	const themeColor = themeProps.color;
 	const theme = !isBaseTheme ? themeColor : null;
+	const baseColor = documentColor || globalColor || themeColor;
 
 	const enhancedBlockData = blockData.map(block => ({
 		...block,
+		color: block.color || baseColor,
 		isFilled: !!blockChanges[block.id],
 	}));
 
