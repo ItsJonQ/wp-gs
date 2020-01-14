@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useControls } from "@itsjonq/controls";
-import { globalStyles, useGlobalStylesState } from "./global-styles";
+import { globalStyles, useGlobalStylesState } from "../../global-styles";
 
 function useFontControls() {
 	const globalStylesState = useGlobalStylesState();

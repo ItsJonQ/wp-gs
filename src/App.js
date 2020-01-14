@@ -1,49 +1,15 @@
 import React from "react";
-import { Controls } from "@itsjonq/controls";
-import { globalStyles, useInjectGlobalStyles } from "./global-styles";
-import { SwatchesBlock } from "./blocks/swatches";
-import { TypographyBlock } from "./blocks/typography";
-import { useKnobs } from "./knobs";
-import { ButtonBlock } from "./blocks/button";
-import { GlobalStylesInspector, Section } from "./components";
+import { Route } from "react-router-dom";
+import { Router } from "./components";
+import { Home } from "./pages/home";
+import { Visualizer } from "./pages/visualizer";
 
-/**
- * Bootstraps Theme
- * Uncomment the import statement below.
- * This simulates WordPress loading a theme.json file, which merges with the
- * default global styles config.
- */
-// import "./load-theme";
-
-/**
- * Load the app
- */
-function App() {
-	useInjectGlobalStyles();
-	useKnobs();
-
+export function App() {
 	return (
-		<div className="App">
-			<Controls title="Global Styles" top={48} />
-			<Section title="Button (Block)">
-				<ButtonBlock />
-			</Section>
-			<Section title="Typography (Preview)">
-				<TypographyBlock />
-			</Section>
-			<Section title="Colors (Preview)">
-				<SwatchesBlock />
-			</Section>
-			<GlobalStylesInspector />
-		</div>
+		<Router>
+			<Route path="/visualizer" component={Visualizer} />
+			<Route path="/v" exact component={Visualizer} />
+			<Route path="/" component={Home} />
+		</Router>
 	);
 }
-
-const loggerPlugin = state => {
-	// console.log("UPDATE", state);
-	return state;
-};
-
-globalStyles.addTransformer(loggerPlugin);
-
-export default App;

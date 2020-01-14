@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
-import { useGlobalStylesState } from "../global-styles";
+import { useGlobalStylesState } from "../../../global-styles";
 
 export function SwatchesBlock() {
 	const { color } = useGlobalStylesState();

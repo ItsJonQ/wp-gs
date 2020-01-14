@@ -1,5 +1,5 @@
 import colorize from "tinycolor2";
-import { merge } from "../../global-styles";
+import { merge } from "../../../../global-styles";
 
 export function buttonBlockTransformer(state) {
 	const { button, colors } = state;

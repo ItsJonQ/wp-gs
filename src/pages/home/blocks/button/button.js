@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useControls } from "@itsjonq/controls";
-import { globalStyles, useGlobalStylesState } from "../../global-styles";
+import { globalStyles, useGlobalStylesState } from "../../../../global-styles";
 import { buttonBlockTransformer } from "./button-transformer";
 import { defaultStyles } from "./styles";
 import "./button.css";
