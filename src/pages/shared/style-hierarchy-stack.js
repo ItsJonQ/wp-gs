@@ -3,18 +3,20 @@ import { Flex, View } from "@itsjonq/elm";
 
 export function StyleHierarchyStack({
 	color = "black",
-	global = false,
+	global = null,
 	theme = null,
+	document = null,
 	blocks = [],
 }) {
 	const defaultColor = "black";
-	const globalColor = color || theme || defaultColor;
 	const styledColor = theme || defaultColor;
+	const globalColor = color || styledColor;
+	const documentColor = document || globalColor;
 
 	return (
 		<View position="fixed" bottom={30} right={30}>
 			<View
-				width={400}
+				width={460}
 				display="flex"
 				flexDirection="column"
 				alignItems="center"
@@ -29,13 +31,19 @@ export function StyleHierarchyStack({
 						<Flex.Block key={block.id}>
 							<StyleHierarchyTier
 								{...block}
-								level={3}
+								level={4}
 								label="Block"
 								width="100%"
 							/>
 						</Flex.Block>
 					))}
 				</Flex>
+				<StyleHierarchyTier
+					level={3}
+					color={documentColor}
+					label="Document"
+					isFilled={!!document}
+				/>
 				<StyleHierarchyTier
 					level={2}
 					color={globalColor}
@@ -63,7 +71,7 @@ function StyleHierarchyTier({
 	...props
 }) {
 	const width = `${100 - level * 15}%`;
-	const transitionDelay = `${(level * 1.5 + 1) * 100}ms`;
+	const transitionDelay = `${(level * 1.25 + 1) * 60}ms`;
 	const transition = `all 200ms ease ${transitionDelay}`;
 
 	const style = isFilled
@@ -85,7 +93,7 @@ function StyleHierarchyTier({
 			justifyContent="center"
 			margin={2}
 			minHeight={25}
-			padding="3px 10px"
+			padding="3px 6px"
 			textAlign="center"
 			transition={transition}
 			width={width}
