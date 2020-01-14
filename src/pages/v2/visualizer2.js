@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { StyleHierarchyStack } from "../shared";
 
 const baseTheme = {
 	color: "black",
@@ -40,11 +41,24 @@ function Provider({ children }) {
 		});
 	};
 
+	const resetGlobalColor = () => {
+		const currentTheme = themes[theme];
+		setThemes({
+			...themes,
+			[theme]: {
+				...currentTheme,
+				global: "",
+			},
+		});
+	};
+
 	const contextProps = {
 		theme,
 		themes,
 		blocks,
 		setBlocks,
+		setGlobalColor,
+		resetGlobalColor,
 	};
 
 	return <Rdx.Provider value={contextProps}>{children}</Rdx.Provider>;
@@ -53,7 +67,7 @@ function Provider({ children }) {
 export function Visualizer2() {
 	return (
 		<Provider>
-			<div>hello</div>
+			<StyleHierarchyStack />
 		</Provider>
 	);
 }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Route, NavLink, useLocation } from "react-router-dom";
+import { Route, NavLink } from "react-router-dom";
 import { Flex, View } from "@itsjonq/elm";
+import { StyleHierarchyStack, useQuery } from "../shared";
 
 export function Visualizer() {
 	return (
@@ -210,105 +211,4 @@ function ParagraphBlock({ color = "black", onChange, onReset }) {
 			</Flex.Item>
 		</Flex>
 	);
-}
-
-function StyleHierarchyStack({
-	color = "black",
-	global = false,
-	theme = null,
-	blocks = [],
-}) {
-	const defaultColor = "black";
-	const globalColor = color || theme || defaultColor;
-	const styledColor = theme || defaultColor;
-
-	return (
-		<View position="fixed" bottom={30} right={30}>
-			<View
-				width={400}
-				display="flex"
-				flexDirection="column"
-				alignItems="center"
-			>
-				<Flex justifyContent="center">
-					<Flex.Item marginBottom={10} fontSize={11}>
-						Style Hierarchy
-					</Flex.Item>
-				</Flex>
-				<StyleHierarchyTier level={0} color="black" label="Core" />
-				<StyleHierarchyTier
-					level={1}
-					color={styledColor}
-					label="Theme"
-					isFilled={!!theme}
-				/>
-				<StyleHierarchyTier
-					level={2}
-					color={globalColor}
-					label="Global"
-					isFilled={!!global}
-				/>
-				<Flex>
-					{blocks.map(block => (
-						<Flex.Block key={block.id}>
-							<StyleHierarchyTier
-								{...block}
-								level={3}
-								label="Block"
-								width="100%"
-							/>
-						</Flex.Block>
-					))}
-				</Flex>
-			</View>
-		</View>
-	);
-}
-
-function StyleHierarchyTier({
-	level = 0,
-	color = "black",
-	label = "",
-	isFilled = true,
-	...props
-}) {
-	const width = `${100 - level * 15}%`;
-	const transitionDelay = `${(level * 1.5 + 1) * 100}ms`;
-	const transition = `all 200ms ease ${transitionDelay}`;
-
-	const style = isFilled
-		? {
-				backgroundColor: color,
-				color: "white",
-		  }
-		: {
-				backgroundColor: `rgba(0, 0, 0, 0)`,
-				color: "black",
-		  };
-
-	return (
-		<View
-			alignItems="center"
-			border={`2px solid ${color}`}
-			display="flex"
-			fontSize={11}
-			justifyContent="center"
-			margin={2}
-			minHeight={25}
-			padding="3px 10px"
-			textAlign="center"
-			transition={transition}
-			width={width}
-			{...style}
-			{...props}
-		>
-			<View>{label}</View>
-		</View>
-	);
-}
-
-// A custom hook that builds on useLocation to parse
-// the query string for you.
-function useQuery() {
-	return new URLSearchParams(useLocation().search);
 }
