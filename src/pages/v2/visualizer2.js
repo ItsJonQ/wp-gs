@@ -214,9 +214,9 @@ function PostPage() {
 		blockChanges,
 		updateBlock,
 		resetBlockData,
+		themeColor,
 	} = useAppContext();
-	const baseColor = documentColor || globalColor;
-	const baseColorRef = useRef(baseColor);
+	const baseColor = documentColor || themeColor || globalColor;
 
 	useEffect(() => {
 		const nextBlocks = ["a", "b", "c", "d"].reduce((nextBlocks, id) => {
@@ -224,7 +224,7 @@ function PostPage() {
 				...nextBlocks,
 				{
 					id,
-					color: baseColorRef.current,
+					color: undefined,
 				},
 			];
 		}, []);
@@ -233,7 +233,7 @@ function PostPage() {
 		return () => {
 			resetBlockData();
 		};
-	}, [setBlockData, baseColorRef, resetBlockData]);
+	}, [setBlockData, resetBlockData]);
 
 	const createHandleOnChange = id => nextColor => {
 		updateBlock(id, nextColor);
@@ -246,7 +246,6 @@ function PostPage() {
 				const color = block.color || baseColor;
 				const isFilled = !!blockChanges[block.id];
 
-				console.log(block.color);
 				return (
 					<ParagraphBlock
 						key={block.id}
@@ -261,7 +260,7 @@ function PostPage() {
 }
 
 function ThemeSwitcher() {
-	const { themes, setTheme } = useAppContext();
+	const { themes, setTheme, theme } = useAppContext();
 	const themeKeys = Object.keys(themes);
 
 	return (
@@ -269,7 +268,7 @@ function ThemeSwitcher() {
 			<hr />
 			<View padding="10px 0">
 				<View as="h5" margin={0}>
-					Theme Switcher
+					{`Theme Switcher (Current: ${theme})`}
 				</View>
 				{themeKeys.map(key => {
 					const value = themes[key];
