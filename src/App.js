@@ -8,9 +8,12 @@ import { ButtonBlock } from "./blocks/button";
 import { GlobalStylesInspector, Section } from "./components";
 
 /**
- * Bootstrap Theme
+ * Bootstraps Theme
+ * Uncomment the import statement below.
+ * This simulates WordPress loading a theme.json file, which merges with the
+ * default global styles config.
  */
-import "./load-theme";
+// import "./load-theme";
 
 /**
  * Load the app
@@ -37,7 +40,7 @@ function App() {
 }
 
 const loggerPlugin = state => {
-	console.log("UPDATE", state);
+	// console.log("UPDATE", state);
 	return state;
 };
 

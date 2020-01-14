@@ -2,7 +2,7 @@
     "name": "Glob",
     "colors": {
         "background": "#f2f2f2",
-        "text": "red",
+        "text": "darkred",
         "custom1": "purple",
         "custom2": "green"
     },

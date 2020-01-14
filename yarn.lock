@@ -1030,10 +1030,10 @@
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
   integrity sha512-QPcGmICAPbGLGb6F/yNf/KzKqvFx8z5qx3D1yFqVAjoFmXK35EgyW+cJ57Te3CNsmzblwtzakLGFqHPqrfb4Tw==
 
-"@itsjonq/controls@0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@itsjonq/controls/-/controls-0.0.8.tgz#faaf5dd0ac6d132ab19a323bb9baba442c128b1e"
-  integrity sha512-bTb+hdHUFUgjzTzKL7jDnPc+YWBl21WyiPoZuqXn+o4SeC2E6I7Dtjl7c+Cu5YZ6pGYOhwn7TqRdNwLd4Wi+qA==
+"@itsjonq/controls@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@itsjonq/controls/-/controls-0.0.9.tgz#7be731a33b00d248c904e2f14db279abb6febf73"
+  integrity sha512-J6lng9HW+dMZBOt783R3D8O4wn3oyaqDG+A588rw+LeTvvQKgIjgv9HV/pT4mJ0xnNuXwYrLXg0pnFJX8eC6Lw==
   dependencies:
     "@emotion/core" "^10.0.22"
     "@emotion/styled" "^10.0.23"
@@ -1045,7 +1045,7 @@
     tinycolor2 "^1.4.1"
     unistore "^3.5.1"
 
-"@itsjonq/elm@0.0.6":
+"@itsjonq/elm@^0.0.6":
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@itsjonq/elm/-/elm-0.0.6.tgz#70cf6f0b01c066e4704d6927a96bfef9c5cf8a21"
   integrity sha512-tQtglAPjNTsLnXxAYrhbFmmGLfilzLhcjphqfoCgxx+RMJPeKmzZd0BAGM1A9bgTpFC26hs4EuUMSHBva4hSTg==
