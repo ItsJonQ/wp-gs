@@ -6,6 +6,7 @@ export function StyleHierarchyStack({
 	global = null,
 	theme = null,
 	document = null,
+	showDocument = true,
 	blocks = [],
 }) {
 	const defaultColor = "black";
@@ -38,12 +39,14 @@ export function StyleHierarchyStack({
 						</Flex.Block>
 					))}
 				</Flex>
-				<StyleHierarchyTier
-					level={3}
-					color={documentColor}
-					label="Document"
-					isFilled={!!document}
-				/>
+				{showDocument && (
+					<StyleHierarchyTier
+						level={3}
+						color={documentColor}
+						label="Document"
+						isFilled={!!document}
+					/>
+				)}
 				<StyleHierarchyTier
 					level={2}
 					color={globalColor}

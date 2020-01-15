@@ -1,13 +1,7 @@
-import React, {
-	useCallback,
-	useRef,
-	useEffect,
-	useState,
-	useContext,
-} from "react";
-import { Route, NavLink } from "react-router-dom";
+import React, { useCallback, useState, useContext } from "react";
+import { Route, NavLink, useParams } from "react-router-dom";
 import { View } from "@itsjonq/elm";
-import { ParagraphBlock, StyleHierarchyStack, useQuery } from "../shared";
+import { ParagraphBlock, StyleHierarchyStack } from "../shared";
 
 const baseTheme = {
 	color: "black",
@@ -36,40 +30,60 @@ const initialState = {
 const Rdx = React.createContext({});
 const useAppContext = () => useContext(Rdx);
 
+const initialBlocks = ["a", "b", "c", "d"].reduce((nextBlocks, id) => {
+	return [
+		...nextBlocks,
+		{
+			id,
+			color: undefined,
+		},
+	];
+}, []);
+
 function Provider({ children }) {
 	const [theme, setTheme] = useState("base");
 	const [themes, setThemes] = useState(initialState);
-	const [blockData, setBlockData] = useState([]);
+	const [blockData, setBlockData] = useState(initialBlocks);
 	const [blockChanges, setBlockChanges] = useState({});
 
-	const updateTheme = (prop, value = "") => {
-		const currentTheme = themes[theme];
-		setThemes({
-			...themes,
-			[theme]: {
-				...currentTheme,
-				[prop]: value,
-			},
-		});
-	};
+	const updateTheme = useCallback(
+		(prop, value = "", customProps = {}) => {
+			const currentTheme = themes[theme];
+			setThemes({
+				...themes,
+				[theme]: {
+					...currentTheme,
+					[prop]: value,
+					...customProps,
+				},
+			});
+		},
+		[theme, themes]
+	);
 
-	const setGlobalColor = nextColor => {
-		updateTheme("global", nextColor);
-	};
+	const setGlobalColor = useCallback(
+		nextColor => {
+			updateTheme("global", nextColor);
+		},
+		[updateTheme]
+	);
 
-	const resetGlobalColor = () => {
+	const resetGlobalColor = useCallback(() => {
 		updateTheme("global", "");
-	};
+	}, [updateTheme]);
 
-	const setDocumentColor = nextColor => {
-		if (nextColor) {
-			updateTheme("document", nextColor);
-		}
-	};
+	const setDocumentColor = useCallback(
+		nextColor => {
+			if (nextColor) {
+				updateTheme("document", nextColor);
+			}
+		},
+		[updateTheme]
+	);
 
-	const resetDocumentColor = () => {
+	const resetDocumentColor = useCallback(() => {
 		updateTheme("document", "");
-	};
+	}, [updateTheme]);
 
 	const updateBlock = useCallback(
 		(id, color) => {
@@ -100,6 +114,19 @@ function Provider({ children }) {
 	const globalColor = themeProps.global;
 	const documentColor = themeProps.document;
 
+	const resetAllChanges = useCallback(() => {
+		updateTheme("document", "", {
+			document: "",
+			global: "",
+		});
+	}, [updateTheme]);
+
+	const state = {
+		theme,
+		blockData,
+		themes,
+	};
+
 	const contextProps = {
 		blockChanges,
 		blockData,
@@ -118,6 +145,8 @@ function Provider({ children }) {
 		themeProps,
 		themes,
 		updateBlock,
+		resetAllChanges,
+		state,
 	};
 
 	return <Rdx.Provider value={contextProps}>{children}</Rdx.Provider>;
@@ -166,6 +195,7 @@ function GlobalPage() {
 		globalColor,
 		setGlobalColor,
 		resetGlobalColor,
+		resetAllChanges,
 	} = useAppContext();
 	const color = globalColor || themeColor;
 
@@ -176,6 +206,10 @@ function GlobalPage() {
 				onChange={setGlobalColor}
 				onReset={resetGlobalColor}
 			/>
+			<hr />
+			<button onClick={resetAllChanges}>
+				RESET GLOBAL + DOCUMENT STYLES
+			</button>
 		</Page>
 	);
 }
@@ -209,31 +243,13 @@ function PostPage() {
 	const {
 		documentColor,
 		globalColor,
-		setBlockData,
 		blockData,
 		blockChanges,
 		updateBlock,
-		resetBlockData,
 		themeColor,
 	} = useAppContext();
-	const baseColor = documentColor || themeColor || globalColor;
 
-	useEffect(() => {
-		const nextBlocks = ["a", "b", "c", "d"].reduce((nextBlocks, id) => {
-			return [
-				...nextBlocks,
-				{
-					id,
-					color: undefined,
-				},
-			];
-		}, []);
-		setBlockData(nextBlocks);
-
-		return () => {
-			resetBlockData();
-		};
-	}, [setBlockData, resetBlockData]);
+	const baseColor = documentColor || globalColor || themeColor;
 
 	const createHandleOnChange = id => nextColor => {
 		updateBlock(id, nextColor);
@@ -245,6 +261,7 @@ function PostPage() {
 				const onChange = createHandleOnChange(block.id);
 				const color = block.color || baseColor;
 				const isFilled = !!blockChanges[block.id];
+				console.log(block.color, baseColor);
 
 				return (
 					<ParagraphBlock
@@ -321,13 +338,19 @@ function HierarchyStack() {
 		isFilled: !!blockChanges[block.id],
 	}));
 
+	const params = useParams();
+	const blocks = params.id === "post" ? enhancedBlockData : [];
+	const isGlobalPage = !params.id || params.id === "global";
+	const showDocument = !isGlobalPage;
+
 	return (
 		<StyleHierarchyStack
-			blocks={enhancedBlockData}
+			blocks={blocks}
 			theme={theme}
 			color={globalColor}
 			global={globalColor}
 			document={documentColor}
+			showDocument={showDocument}
 		/>
 	);
 }
