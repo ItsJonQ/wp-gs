@@ -17,6 +17,7 @@ export const useCurrentTheme = () => {
 
 export const useCurrentThemeDocuments = () => {
 	const currentTheme = useCurrentTheme();
+
 	return currentTheme ? currentTheme.documents : [];
 };
 
@@ -38,5 +39,6 @@ export const useThemeDocumentStylesData = id => {
 
 export const useThemeDocumentStylesCssVariables = id => {
 	const styleData = useThemeDocumentStylesData(id);
+
 	return styleData.variables;
 };
