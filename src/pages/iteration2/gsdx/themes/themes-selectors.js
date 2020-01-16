@@ -12,13 +12,25 @@ export const useCurrentTheme = () => {
 	const themes = useThemes();
 	const siteCurrentTheme = useSiteCurrentTheme();
 
-	return themes.find(theme => theme.name === siteCurrentTheme);
+	return themes.find(theme => theme.name === siteCurrentTheme) || {};
+};
+
+export const useCurrentThemeStyles = () => {
+	const currentTheme = useCurrentTheme();
+
+	return currentTheme.styles || {};
+};
+
+export const useCurrentThemeGlobalStyles = () => {
+	const currentTheme = useCurrentTheme();
+
+	return currentTheme.globals || {};
 };
 
 export const useCurrentThemeDocuments = () => {
 	const currentTheme = useCurrentTheme();
 
-	return currentTheme ? currentTheme.documents : [];
+	return currentTheme.documents || [];
 };
 
 export const useThemeDocumentStyles = id => {

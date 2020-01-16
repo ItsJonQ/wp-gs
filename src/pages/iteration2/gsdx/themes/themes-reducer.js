@@ -7,7 +7,40 @@ const pageDocument = createDocumentData({ name: "Page", slug: "page" });
 
 baseTheme.documents = [pageDocument];
 
-export const initialState = [baseTheme];
+const fireTheme = createThemeData({
+	name: "fire",
+	styles: {
+		colors: {
+			background: "#F7B538",
+			text: "#780116",
+		},
+	},
+});
+fireTheme.documents = [{ ...pageDocument }];
+
+const waterTheme = createThemeData({
+	name: "water",
+	styles: {
+		colors: {
+			background: "#D8DBE0",
+			text: "#005FB2",
+		},
+	},
+});
+waterTheme.documents = [{ ...pageDocument }];
+
+const grassTheme = createThemeData({
+	name: "grass",
+	styles: {
+		colors: {
+			background: "#A9FFCB",
+			text: "#1A936F",
+		},
+	},
+});
+grassTheme.documents = [{ ...pageDocument }];
+
+export const initialState = [baseTheme, fireTheme, waterTheme, grassTheme];
 
 export function themesReducer(state = initialState, action) {
 	const { payload } = action;

@@ -7,15 +7,19 @@ import "./rdx.css";
 
 import {
 	store,
-	useSetGlobalStyles,
-	useSetDocumentStyles,
-	useInjectGlobalStyles,
+	useChangeSiteTheme,
+	useCurrentTheme,
+	useCurrentThemeGlobalStyles,
 	useCurrentThemeDocuments,
+	useInjectGlobalStyles,
+	usePostBlocks,
+	usePostBlockStylesCssVariables,
+	useSetDocumentStyles,
+	useSetGlobalStyles,
 	useThemeDocumentStyles,
 	useThemeDocumentStylesCssVariables,
-	usePostBlocks,
+	useThemes,
 	useUpdatePostBlockStyles,
-	usePostBlockStylesCssVariables,
 } from "./gsdx";
 
 function AppProvider({ children }) {
@@ -33,46 +37,84 @@ export function Iteration2() {
 
 function App() {
 	useBootstrapApp();
+	useGlobalFontControls();
 
-	const { color, range } = useControls();
+	return (
+		<View padding={30}>
+			<ThemeSwitcher />
+
+			<hr />
+
+			<GlobalExample />
+
+			<hr />
+
+			<DocumentExample />
+
+			<hr />
+
+			<BlockExample />
+		</View>
+	);
+}
+
+function GlobalExample() {
+	const themeGlobalStyles = useCurrentThemeGlobalStyles();
 	const setGlobalStyles = useSetGlobalStyles();
+
+	const globalTextColor = get(themeGlobalStyles, "colors.text");
+	const globalBackgroundColor = get(themeGlobalStyles, "colors.background");
+
+	const handleOnGlobalTextColorChange = event => {
+		setGlobalStyles({
+			colors: {
+				text: event.target.value,
+			},
+		});
+	};
+
+	const handleOnGlobalBackgroundColorChange = event => {
+		setGlobalStyles({
+			colors: {
+				background: event.target.value,
+			},
+		});
+	};
+
+	return (
+		<View>
+			<Flex maxWidth={600}>
+				<Flex.Block>
+					<h1>Global</h1>
+				</Flex.Block>
+				<InputColorControls
+					textColor={globalTextColor}
+					backgroundColor={globalBackgroundColor}
+					onChangeTextColor={handleOnGlobalTextColorChange}
+					onChangeBackgroundColor={
+						handleOnGlobalBackgroundColorChange
+					}
+				/>
+			</Flex>
+			<BlockComponents withBlockStyles={false} blockLimit={1} />
+		</View>
+	);
+}
+
+function DocumentExample() {
 	const setDocumentStyles = useSetDocumentStyles();
+	const themeGlobalStyles = useCurrentThemeGlobalStyles();
 	const [themeDocument] = useCurrentThemeDocuments();
-
-	const textColor = color("colors.text", "black");
-	const backgroundColor = color("colors.backgrondColor", "white");
-	const primaryColor = color("colors.primary", "#05f");
-
-	const fontSize = range("fontSizes.base", 16, { min: 11, max: 18 });
-	const fontScale = range("fontScale", 1.1, { min: 1, max: 1.5, step: 0.1 });
+	const globalTextColor = get(themeGlobalStyles, "colors.text");
+	const globalBackgroundColor = get(themeGlobalStyles, "colors.background");
 
 	const documentId = themeDocument ? themeDocument.id : null;
 	const documentStyles = useThemeDocumentStyles(documentId);
-	const documentTextColor = get(documentStyles, "colors.text") || textColor;
-	const documentBackgroundColor =
-		get(documentStyles, "colors.background") || backgroundColor;
 
-	useEffect(() => {
-		const config = {
-			colors: {
-				background: backgroundColor,
-				text: textColor,
-				primary: primaryColor,
-			},
-			fontSizes: {
-				base: fontSize,
-			},
-			fontScale,
-		};
-		setGlobalStyles(config);
-	}, [
-		backgroundColor,
-		textColor,
-		primaryColor,
-		fontSize,
-		fontScale,
-		setGlobalStyles,
-	]);
+	const documentTextColor =
+		get(documentStyles, "colors.text") || globalTextColor;
+	const documentBackgroundColor =
+		get(documentStyles, "colors.background") || globalBackgroundColor;
 
 	const handleOnDocumentTextColorChange = event => {
 		setDocumentStyles({
@@ -97,59 +139,42 @@ function App() {
 	};
 
 	return (
-		<View padding={30}>
-			<View>
-				<h1>Global</h1>
-				<BlockComponents withBlockStyles={false} blockLimit={1} />
-			</View>
-
-			<hr />
-
-			<DocumentPage>
-				<Flex maxWidth={600}>
-					<Flex.Block>
-						<h1>Template</h1>
-					</Flex.Block>
-					<Flex.Item>
-						Text
-						<br />
-						<input
-							type="color"
-							value={documentTextColor}
-							onChange={handleOnDocumentTextColorChange}
-						/>
-					</Flex.Item>
-					<Flex.Item>
-						BG
-						<br />
-						<input
-							type="color"
-							value={documentBackgroundColor}
-							onChange={handleOnDocumentBackgroundColorChange}
-						/>
-					</Flex.Item>
-				</Flex>
-				<BlockComponents withBlockStyles={false} blockLimit={1} />
-			</DocumentPage>
-
-			<hr />
-
-			<Flex alignItems="top">
+		<DocumentPage>
+			<Flex maxWidth={600}>
 				<Flex.Block>
-					<DocumentPage>
-						<h1>Single (Post, within Template)</h1>
-						<BlockComponents showColorPicker />
-					</DocumentPage>
+					<h1>Template</h1>
 				</Flex.Block>
-
-				<Flex.Block>
-					<View>
-						<h1>Single (Post, NOT within Template)</h1>
-						<BlockComponents showColorPicker postId="p2" />
-					</View>
-				</Flex.Block>
+				<InputColorControls
+					textColor={documentTextColor}
+					backgroundColor={documentBackgroundColor}
+					onChangeTextColor={handleOnDocumentTextColorChange}
+					onChangeBackgroundColor={
+						handleOnDocumentBackgroundColorChange
+					}
+				/>
 			</Flex>
-		</View>
+			<BlockComponents withBlockStyles={false} blockLimit={1} />
+		</DocumentPage>
+	);
+}
+
+function BlockExample() {
+	return (
+		<Flex alignItems="top">
+			<Flex.Block>
+				<DocumentPage>
+					<h1>Single (Post, within Template)</h1>
+					<BlockComponents showColorPicker />
+				</DocumentPage>
+			</Flex.Block>
+
+			<Flex.Block>
+				<View>
+					<h1>Single (Post, NOT within Template)</h1>
+					<BlockComponents showColorPicker postId="p2" />
+				</View>
+			</Flex.Block>
+		</Flex>
 	);
 }
 
@@ -213,26 +238,12 @@ function BlockComponents({
 						<Flex alignItems="top" maxWidth={600}>
 							<Flex.Block>{blockMarkup}</Flex.Block>
 							{showColorPicker && (
-								<>
-									<Flex.Item>
-										Text
-										<br />
-										<input
-											type="color"
-											onChange={handleOnTextColorChange}
-										/>
-									</Flex.Item>
-									<Flex.Item>
-										BG
-										<br />
-										<input
-											type="color"
-											onChange={
-												handleOnBackgroundColorChange
-											}
-										/>
-									</Flex.Item>
-								</>
+								<InputColorControls
+									onChangeTextColor={handleOnTextColorChange}
+									onChangeBackgroundColor={
+										handleOnBackgroundColorChange
+									}
+								/>
 							)}
 						</Flex>
 					</BlockItemWrapper>
@@ -258,6 +269,84 @@ function DocumentPage({ children }) {
 	return <View style={documentCssVariables}>{children}</View>;
 }
 
+function InputColorControls({
+	textColor,
+	backgroundColor,
+	onChangeTextColor,
+	onChangeBackgroundColor,
+	onResetTextColor,
+	onResetBackgroundColor,
+	showResetButtons = false,
+}) {
+	return (
+		<View>
+			<Flex justifyContents="left" marginBottom={5}>
+				<Flex.Item>
+					<View>
+						<View fontSize={10}>TEXT</View>
+						<input
+							type="color"
+							onChange={onChangeTextColor}
+							value={textColor}
+						/>
+					</View>
+					{showResetButtons && (
+						<button onClick={onResetTextColor}>Reset</button>
+					)}
+				</Flex.Item>
+				<Flex.Item>
+					<View>
+						<View fontSize={10}>BG</View>
+						<input
+							type="color"
+							value={backgroundColor}
+							onChange={onChangeBackgroundColor}
+						/>
+					</View>
+					{showResetButtons && (
+						<button onClick={onResetBackgroundColor}>Reset</button>
+					)}
+				</Flex.Item>
+			</Flex>
+		</View>
+	);
+}
+
+function ThemeSwitcher() {
+	const themes = useThemes();
+	const currentTheme = useCurrentTheme();
+	const changeSiteTheme = useChangeSiteTheme();
+
+	return (
+		<View>
+			<h2>{`Theme Switcher (Currently: ${currentTheme.name})`}</h2>
+			<Flex alignItems="left" maxWidth={500}>
+				{themes.map(theme => {
+					const colors = theme.styles.colors || {};
+					const backgroundColor = colors.background;
+					const textColor = colors.text;
+
+					return (
+						<Flex.Block key={theme.id}>
+							<View
+								display="block"
+								padding={8}
+								width="100%"
+								as="button"
+								backgroundColor={backgroundColor}
+								color={textColor}
+								onClick={() => changeSiteTheme(theme.name)}
+							>
+								{theme.name}
+							</View>
+						</Flex.Block>
+					);
+				})}
+			</Flex>
+		</View>
+	);
+}
+
 function useBootstrapApp() {
 	useInjectGlobalStyles();
 	const didLoadRef = useRef(false);
@@ -267,4 +356,20 @@ function useBootstrapApp() {
 			didLoadRef.current = true;
 		}
 	}, [didLoadRef]);
+}
+
+function useGlobalFontControls() {
+	const { range } = useControls();
+	const setGlobalStyles = useSetGlobalStyles();
+
+	const fontSize = range("fontSizes.base", 16, { min: 11, max: 18 });
+
+	useEffect(() => {
+		const config = {
+			fontSizes: {
+				base: fontSize,
+			},
+		};
+		setGlobalStyles(config);
+	}, [fontSize, setGlobalStyles]);
 }
