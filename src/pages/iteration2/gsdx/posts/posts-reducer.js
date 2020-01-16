@@ -20,7 +20,7 @@ const post1 = createBlockData({
 });
 const post2 = createPostData({ id: "p2", blocks: generateBlocks([1, 2, 3]) });
 
-export const initialState = [post1, post2];
+const initialState = [post1, post2];
 
 export function postsReducer(state = initialState, action) {
 	const { payload } = action;

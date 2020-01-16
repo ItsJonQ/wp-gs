@@ -1,6 +1,6 @@
 import { SITE_ACTIONS as ACTIONS } from "./site-actions";
 
-export const initialState = {
+const initialState = {
 	currentTheme: "base",
 };
 

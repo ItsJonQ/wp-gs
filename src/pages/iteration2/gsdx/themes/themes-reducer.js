@@ -44,7 +44,7 @@ const grassTheme = createThemeData({
 });
 grassTheme.documents = [{ ...pageDocument }];
 
-export const initialState = [baseTheme, fireTheme, waterTheme, grassTheme];
+const initialState = [baseTheme, fireTheme, waterTheme, grassTheme];
 
 export function themesReducer(state = initialState, action) {
 	const { payload } = action;

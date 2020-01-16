@@ -19,7 +19,7 @@ export const defaultTheme = {
 const defaultPlugins = [colorSchemePlugin, fontSizePlugin];
 const defaultTransforms = [cssVariableTransform, ...defaultPlugins];
 
-export const initialState = {
+const initialState = {
 	defaultTheme,
 	plugins: defaultPlugins,
 	transforms: defaultTransforms,
