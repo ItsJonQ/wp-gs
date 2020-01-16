@@ -6,6 +6,16 @@ const ACTION_TYPES = ["UPDATE_POST_BLOCK_STYLES"];
 
 export const POSTS_ACTIONS = createActionTypes(ACTION_TYPES);
 
+export function createBlockData(props = {}) {
+	const data = {
+		id: uuid(),
+		styles: {},
+		type: "div",
+	};
+
+	return merge(data, props);
+}
+
 export function createPostData(props = {}) {
 	const data = {
 		id: uuid(),

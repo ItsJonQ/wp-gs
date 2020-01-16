@@ -1,5 +1,8 @@
-import { createBlockData } from "../blocks";
-import { createPostData, POSTS_ACTIONS as ACTIONS } from "./posts-actions";
+import {
+	createBlockData,
+	createPostData,
+	POSTS_ACTIONS as ACTIONS,
+} from "./posts-actions";
 import { merge } from "../utils";
 
 const generateBlocks = collection =>
@@ -15,7 +18,7 @@ const post1 = createBlockData({
 	id: "p1",
 	blocks: generateBlocks([1, 2, 3, 4]),
 });
-const post2 = createBlockData({ id: "p2", blocks: generateBlocks([1, 2, 3]) });
+const post2 = createPostData({ id: "p2", blocks: generateBlocks([1, 2, 3]) });
 
 export const initialState = [post1, post2];
 

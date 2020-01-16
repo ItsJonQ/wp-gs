@@ -7,15 +7,12 @@ import "./rdx.css";
 
 import {
 	store,
-	useBlocks,
 	useSetGlobalStyles,
 	useSetDocumentStyles,
 	useInjectGlobalStyles,
 	useCurrentThemeDocuments,
 	useThemeDocumentStyles,
 	useThemeDocumentStylesCssVariables,
-	useBlockStylesCssVariables,
-	useUpdateBlockStyles,
 	usePostBlocks,
 	useUpdatePostBlockStyles,
 	usePostBlockStylesCssVariables,
@@ -25,7 +22,7 @@ function AppProvider({ children }) {
 	return <Provider store={store}>{children}</Provider>;
 }
 
-export function RDX() {
+export function Iteration2() {
 	return (
 		<AppProvider>
 			<App />

@@ -2,7 +2,6 @@ import { createStore, combineReducers, applyMiddleware } from "redux";
 import { useStore } from "react-redux";
 import { createLogger } from "redux-logger";
 
-import { blocksReducer } from "./blocks";
 import { coreReducer } from "./core";
 import { postsReducer } from "./posts";
 import { siteReducer } from "./site";
@@ -13,7 +12,6 @@ const logger = createLogger({
 });
 
 export const rootReducer = combineReducers({
-	blocks: blocksReducer,
 	core: coreReducer,
 	posts: postsReducer,
 	site: siteReducer,
