@@ -3,7 +3,11 @@ import { THEMES_ACTIONS as ACTIONS } from "./themes-actions";
 import { merge } from "../utils";
 
 const baseTheme = createThemeData({ name: "base" });
-const pageDocument = createDocumentData({ name: "Page", slug: "page" });
+const pageDocument = createDocumentData({
+	name: "Page",
+	slug: "page",
+	id: "d1",
+});
 
 baseTheme.documents = [pageDocument];
 

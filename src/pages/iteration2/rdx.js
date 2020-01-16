@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useCallback, useRef, useEffect } from "react";
 import { get, isUndefined } from "lodash";
 import { Provider } from "react-redux";
 import { useControls, Controls } from "@itsjonq/controls";
@@ -8,12 +8,14 @@ import "./rdx.css";
 import {
 	store,
 	useChangeSiteTheme,
+	useCoreThemeStyles,
 	useCurrentTheme,
+	useCurrentThemeStyles,
 	useCurrentThemeGlobalStyles,
 	useCurrentThemeDocuments,
 	useInjectGlobalStyles,
 	usePostBlocks,
-	usePostBlockStylesCssVariables,
+	usePostBlockStylesData,
 	useSetDocumentStyles,
 	useSetGlobalStyles,
 	useThemeDocumentStyles,
@@ -29,7 +31,9 @@ function AppProvider({ children }) {
 export function Iteration2() {
 	return (
 		<AppProvider>
-			<App />
+			<StyleSystemContextProvider>
+				<App />
+			</StyleSystemContextProvider>
 			<Controls title="Global Styles" />
 		</AppProvider>
 	);
@@ -49,7 +53,9 @@ function App() {
 
 			<hr />
 
-			<DocumentExample />
+			<StyleSystemContextProvider documentId="d1">
+				<DocumentExample />
+			</StyleSystemContextProvider>
 
 			<hr />
 
@@ -59,11 +65,11 @@ function App() {
 }
 
 function GlobalExample() {
-	const themeGlobalStyles = useCurrentThemeGlobalStyles();
 	const setGlobalStyles = useSetGlobalStyles();
+	const { getStyleProp } = useStyleSystemContext();
 
-	const globalTextColor = get(themeGlobalStyles, "colors.text");
-	const globalBackgroundColor = get(themeGlobalStyles, "colors.background");
+	const globalTextColor = getStyleProp("colors.text");
+	const globalBackgroundColor = getStyleProp("colors.background");
 
 	const handleOnGlobalTextColorChange = event => {
 		setGlobalStyles({
@@ -103,18 +109,12 @@ function GlobalExample() {
 
 function DocumentExample() {
 	const setDocumentStyles = useSetDocumentStyles();
-	const themeGlobalStyles = useCurrentThemeGlobalStyles();
-	const [themeDocument] = useCurrentThemeDocuments();
-	const globalTextColor = get(themeGlobalStyles, "colors.text");
-	const globalBackgroundColor = get(themeGlobalStyles, "colors.background");
+	const documentId = "d1";
 
-	const documentId = themeDocument ? themeDocument.id : null;
-	const documentStyles = useThemeDocumentStyles(documentId);
+	const { getStyleProp } = useStyleSystemContext();
 
-	const documentTextColor =
-		get(documentStyles, "colors.text") || globalTextColor;
-	const documentBackgroundColor =
-		get(documentStyles, "colors.background") || globalBackgroundColor;
+	const documentTextColor = getStyleProp("colors.text");
+	const documentBackgroundColor = getStyleProp("colors.background");
 
 	const handleOnDocumentTextColorChange = event => {
 		setDocumentStyles({
@@ -185,12 +185,10 @@ function BlockComponents({
 	postId = "p1",
 }) {
 	const blocks = usePostBlocks(postId);
-	const updateBlockStyles = useUpdatePostBlockStyles();
 
 	return (
 		<>
 			{blocks.map((block, index) => {
-				const { type, styles, ...props } = block;
 				const shouldRenderBlock = !isUndefined(blockLimit)
 					? index + 1 === blockLimit
 					: true;
@@ -199,66 +197,93 @@ function BlockComponents({
 					return null;
 				}
 
-				const blockMarkup = React.createElement(type, {
-					...props,
-					key: block.id,
-				});
-
-				const handleOnTextColorChange = event => {
-					updateBlockStyles({
-						id: postId,
-						blockId: block.id,
-						styles: {
-							colors: {
-								text: event.target.value,
-							},
-						},
-					});
-				};
-
-				const handleOnBackgroundColorChange = event => {
-					updateBlockStyles({
-						id: postId,
-						blockId: block.id,
-						styles: {
-							colors: {
-								background: event.target.value,
-							},
-						},
-					});
-				};
-
 				return (
-					<BlockItemWrapper
-						id={postId}
+					<BlockItem
+						{...block}
+						showColorPicker={showColorPicker}
+						postId={postId}
 						blockId={block.id}
 						withBlockStyles={withBlockStyles}
 						key={block.id}
-					>
-						<Flex alignItems="top" maxWidth={600}>
-							<Flex.Block>{blockMarkup}</Flex.Block>
-							{showColorPicker && (
-								<InputColorControls
-									onChangeTextColor={handleOnTextColorChange}
-									onChangeBackgroundColor={
-										handleOnBackgroundColorChange
-									}
-								/>
-							)}
-						</Flex>
-					</BlockItemWrapper>
+					/>
 				);
 			})}
 		</>
 	);
 }
 
-function BlockItemWrapper({ children, styles, withBlockStyles, ...props }) {
-	const { blockId, id } = props;
-	const blockCssVariables = usePostBlockStylesCssVariables({ id, blockId });
-	const style = withBlockStyles ? blockCssVariables : null;
+function BlockItem({
+	styles,
+	withBlockStyles,
+	type,
+	showColorPicker,
+	blockId,
+	postId,
+	...props
+}) {
+	const updateBlockStyles = useUpdatePostBlockStyles();
+	const blockStyleData = usePostBlockStylesData({
+		id: postId,
+		blockId,
+	});
+	const blockCssVariables = blockStyleData.variables;
 
-	return React.cloneElement(children, { style, ...props });
+	const style = withBlockStyles ? blockCssVariables : null;
+	const { getStyleProp } = useStyleSystemContext();
+
+	const textColor = getStyleProp("colors.text");
+	const backgroundColor = getStyleProp("colors.background");
+
+	const blockTextColor = get(blockStyleData.styles, "colors.text", textColor);
+	const blockBackgroundColor = get(
+		blockStyleData.styles,
+		"colors.background",
+		backgroundColor
+	);
+
+	const handleOnTextColorChange = event => {
+		updateBlockStyles({
+			id: postId,
+			blockId: blockId,
+			styles: {
+				colors: {
+					text: event.target.value,
+				},
+			},
+		});
+	};
+
+	const handleOnBackgroundColorChange = event => {
+		updateBlockStyles({
+			id: postId,
+			blockId: blockId,
+			styles: {
+				colors: {
+					background: event.target.value,
+				},
+			},
+		});
+	};
+
+	const blockMarkup = React.createElement(type, {
+		...props,
+		key: blockId,
+		style,
+	});
+
+	return (
+		<Flex alignItems="top" maxWidth={600}>
+			<Flex.Block>{blockMarkup}</Flex.Block>
+			{showColorPicker && (
+				<InputColorControls
+					textColor={blockTextColor}
+					backgroundColor={blockBackgroundColor}
+					onChangeTextColor={handleOnTextColorChange}
+					onChangeBackgroundColor={handleOnBackgroundColorChange}
+				/>
+			)}
+		</Flex>
+	);
 }
 
 function DocumentPage({ children }) {
@@ -266,7 +291,11 @@ function DocumentPage({ children }) {
 	const documentId = themeDocument ? themeDocument.id : null;
 	const documentCssVariables = useThemeDocumentStylesCssVariables(documentId);
 
-	return <View style={documentCssVariables}>{children}</View>;
+	return (
+		<StyleSystemContextProvider documentId={documentId}>
+			<View style={documentCssVariables}>{children}</View>
+		</StyleSystemContextProvider>
+	);
 }
 
 function InputColorControls({
@@ -299,8 +328,8 @@ function InputColorControls({
 						<View fontSize={10}>BG</View>
 						<input
 							type="color"
-							value={backgroundColor}
 							onChange={onChangeBackgroundColor}
+							value={backgroundColor}
 						/>
 					</View>
 					{showResetButtons && (
@@ -372,4 +401,46 @@ function useGlobalFontControls() {
 		};
 		setGlobalStyles(config);
 	}, [fontSize, setGlobalStyles]);
+}
+
+export const StyleSystemContext = React.createContext({});
+export const useStyleSystemContext = () => React.useContext(StyleSystemContext);
+
+function StyleSystemContextProvider({ children, documentId }) {
+	const coreStyles = useCoreThemeStyles();
+	const themeStyles = useCurrentThemeStyles();
+	const themeGlobalStyles = useCurrentThemeGlobalStyles();
+
+	const documentStyles = useThemeDocumentStyles(documentId);
+
+	const combinedStylesProps = {
+		core: coreStyles,
+		theme: themeStyles,
+		global: themeGlobalStyles,
+		document: documentStyles,
+	};
+
+	const getStyleProp = useCallback(
+		getProp => {
+			const coreProp = get(combinedStylesProps.core, getProp);
+			const themeProp = get(combinedStylesProps.theme, getProp);
+			const globalProp = get(combinedStylesProps.global, getProp);
+			const documentProp = get(combinedStylesProps.document, getProp);
+
+			return documentProp || globalProp || themeProp || coreProp;
+		},
+		[combinedStylesProps]
+	);
+
+	const contextProps = {
+		...combinedStylesProps,
+		documentId,
+		getStyleProp,
+	};
+
+	return (
+		<StyleSystemContext.Provider value={contextProps}>
+			{children}
+		</StyleSystemContext.Provider>
+	);
 }

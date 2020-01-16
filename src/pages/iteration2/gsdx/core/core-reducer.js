@@ -3,9 +3,9 @@ import { cssVariableTransform } from "./transforms";
 
 export const defaultTheme = {
 	colors: {
-		text: "#000",
-		background: "#fff",
-		primary: "#07c",
+		text: "#000000",
+		background: "#ffffff",
+		primary: "#07c07c",
 	},
 	fonts: {
 		body: "system-ui, sans-serif",
