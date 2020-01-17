@@ -1,9 +1,10 @@
 import React from "react";
-import { useStyles } from "../../contexts/style-system-context";
+import { SE } from "../../components";
 
 export function ParagraphBlock({ content, withBlockStyles, ...props }) {
-	const style = useStyles(props);
-	const componentStyles = withBlockStyles ? style : null;
-
-	return <p style={componentStyles}>{content}</p>;
+	return (
+		<SE.p {...props} withBlockStyles={withBlockStyles}>
+			{content}
+		</SE.p>
+	);
 }

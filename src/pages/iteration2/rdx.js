@@ -217,8 +217,9 @@ function BlockItem({
 	...props
 }) {
 	const updateBlockStyles = useUpdatePostBlockStyles();
+
 	const blockIdentificationProps = {
-		postId,
+		id: postId,
 		blockId,
 	};
 

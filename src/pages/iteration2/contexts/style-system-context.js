@@ -51,10 +51,10 @@ export function StyleSystemContextProvider({ children, documentId }) {
 	);
 }
 
-export function useStyleProp(getProp, blockIdentificationProps) {
+export function useStyleProp(getProp, blockIdentificationProps = {}) {
 	const { getStyleProp } = useStyleSystemContext();
 	const blockStyleData = usePostBlockStylesData(blockIdentificationProps);
-	const localBlockProp = get(blockStyleData.style, getProp);
+	const localBlockProp = get(blockStyleData.styles, getProp);
 	const systemProp = getStyleProp(getProp);
 
 	return localBlockProp || systemProp;
