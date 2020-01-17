@@ -71,6 +71,6 @@ The way libraries like Emotion coordinate style updates + re-renderings inspired
 
 ![ITCSS](https://other.media/wp-content/uploads/2018/05/itcss_1.png)
 
-The Style Hierarchy of Core, Themes, Global, Document, Blocks was inspired by the "Inverted Triangle" design principle from [ITCSS(https://www.xfive.co/blog/itcss-scalable-maintainable-css-architecture/).
+The Style Hierarchy of Core, Themes, Global, Document, Blocks was inspired by the "Inverted Triangle" design principle from [ITCSS](https://www.xfive.co/blog/itcss-scalable-maintainable-css-architecture/).
 
 Some of the borrowed concepts focus on style layering and the unidirectional flow of specifity (overrides).
