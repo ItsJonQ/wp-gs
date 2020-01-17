@@ -8,7 +8,8 @@ Global styles is a system makes it easier for users to reliably design and styli
 
 ## Demos
 
-**[Latest Iteration](https://9w53w.csb.app/#/i2)**
+* **[Demo of Mechanics](https://9w53w.csb.app/#/i2)**
+* **[Style Hierarchy Visualization](https://9w53w.csb.app/#/v2)**
 
 ## Mechanics
 
