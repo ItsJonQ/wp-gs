@@ -1,24 +1,22 @@
-import React, { useCallback, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { get, isUndefined } from "lodash";
 import { Provider } from "react-redux";
 import { useControls, Controls } from "@itsjonq/controls";
 import { Flex, View } from "@itsjonq/elm";
+import { ParagraphBlock } from "./blocks";
+import { StyleSystemContextProvider, useStyleProp } from "./contexts";
 import "./rdx.css";
 
 import {
 	store,
 	useChangeSiteTheme,
-	useCoreThemeStyles,
 	useCurrentTheme,
-	useCurrentThemeStyles,
-	useCurrentThemeGlobalStyles,
 	useCurrentThemeDocuments,
 	useInjectGlobalStyles,
 	usePostBlocks,
 	usePostBlockStylesData,
 	useSetDocumentStyles,
 	useSetGlobalStyles,
-	useThemeDocumentStyles,
 	useThemeDocumentStylesCssVariables,
 	useThemes,
 	useUpdatePostBlockStyles,
@@ -66,10 +64,9 @@ function App() {
 
 function GlobalExample() {
 	const setGlobalStyles = useSetGlobalStyles();
-	const { getStyleProp } = useStyleSystemContext();
 
-	const globalTextColor = getStyleProp("colors.text");
-	const globalBackgroundColor = getStyleProp("colors.background");
+	const globalTextColor = useStyleProp("colors.text");
+	const globalBackgroundColor = useStyleProp("colors.background");
 
 	const handleOnGlobalTextColorChange = event => {
 		setGlobalStyles({
@@ -111,10 +108,8 @@ function DocumentExample() {
 	const setDocumentStyles = useSetDocumentStyles();
 	const documentId = "d1";
 
-	const { getStyleProp } = useStyleSystemContext();
-
-	const documentTextColor = getStyleProp("colors.text");
-	const documentBackgroundColor = getStyleProp("colors.background");
+	const documentTextColor = useStyleProp("colors.text");
+	const documentBackgroundColor = useStyleProp("colors.background");
 
 	const handleOnDocumentTextColorChange = event => {
 		setDocumentStyles({
@@ -222,23 +217,15 @@ function BlockItem({
 	...props
 }) {
 	const updateBlockStyles = useUpdatePostBlockStyles();
-	const blockStyleData = usePostBlockStylesData({
-		id: postId,
+	const blockIdentificationProps = {
+		postId,
 		blockId,
-	});
-	const blockCssVariables = blockStyleData.variables;
+	};
 
-	const style = withBlockStyles ? blockCssVariables : null;
-	const { getStyleProp } = useStyleSystemContext();
-
-	const textColor = getStyleProp("colors.text");
-	const backgroundColor = getStyleProp("colors.background");
-
-	const blockTextColor = get(blockStyleData.styles, "colors.text", textColor);
-	const blockBackgroundColor = get(
-		blockStyleData.styles,
+	const textColor = useStyleProp("colors.text", blockIdentificationProps);
+	const backgroundColor = useStyleProp(
 		"colors.background",
-		backgroundColor
+		blockIdentificationProps
 	);
 
 	const handleOnTextColorChange = event => {
@@ -265,19 +252,21 @@ function BlockItem({
 		});
 	};
 
-	const blockMarkup = React.createElement(type, {
-		...props,
-		key: blockId,
-		style,
-	});
-
 	return (
 		<Flex alignItems="top" maxWidth={600}>
-			<Flex.Block>{blockMarkup}</Flex.Block>
+			<Flex.Block>
+				<ParagraphBlock
+					withBlockStyles={withBlockStyles}
+					blockId={blockId}
+					postId={postId}
+					key={blockId}
+					content={props.children}
+				/>
+			</Flex.Block>
 			{showColorPicker && (
 				<InputColorControls
-					textColor={blockTextColor}
-					backgroundColor={blockBackgroundColor}
+					textColor={textColor}
+					backgroundColor={backgroundColor}
 					onChangeTextColor={handleOnTextColorChange}
 					onChangeBackgroundColor={handleOnBackgroundColorChange}
 				/>
@@ -401,46 +390,4 @@ function useGlobalFontControls() {
 		};
 		setGlobalStyles(config);
 	}, [fontSize, setGlobalStyles]);
-}
-
-export const StyleSystemContext = React.createContext({});
-export const useStyleSystemContext = () => React.useContext(StyleSystemContext);
-
-function StyleSystemContextProvider({ children, documentId }) {
-	const coreStyles = useCoreThemeStyles();
-	const themeStyles = useCurrentThemeStyles();
-	const themeGlobalStyles = useCurrentThemeGlobalStyles();
-
-	const documentStyles = useThemeDocumentStyles(documentId);
-
-	const combinedStylesProps = {
-		core: coreStyles,
-		theme: themeStyles,
-		global: themeGlobalStyles,
-		document: documentStyles,
-	};
-
-	const getStyleProp = useCallback(
-		getProp => {
-			const coreProp = get(combinedStylesProps.core, getProp);
-			const themeProp = get(combinedStylesProps.theme, getProp);
-			const globalProp = get(combinedStylesProps.global, getProp);
-			const documentProp = get(combinedStylesProps.document, getProp);
-
-			return documentProp || globalProp || themeProp || coreProp;
-		},
-		[combinedStylesProps]
-	);
-
-	const contextProps = {
-		...combinedStylesProps,
-		documentId,
-		getStyleProp,
-	};
-
-	return (
-		<StyleSystemContext.Provider value={contextProps}>
-			{children}
-		</StyleSystemContext.Provider>
-	);
 }

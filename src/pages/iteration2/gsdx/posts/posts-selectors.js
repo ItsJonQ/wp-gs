@@ -15,8 +15,9 @@ const postBlocksSelector = id => {
 };
 
 const postBlockSelector = ({ id, blockId }) => {
-	return createSelector(postBlocksSelector(id), blocks =>
-		blocks.find(block => block.id === blockId)
+	return createSelector(
+		postBlocksSelector(id),
+		blocks => blocks.find(block => block.id === blockId) || {}
 	);
 };
 
