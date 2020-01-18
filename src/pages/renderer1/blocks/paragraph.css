@@ -1,0 +1,9 @@
+.wp-block-paragraph {
+	background: var(--wp-gs-colors-background);
+	margin: 0;
+	padding: 10px;
+}
+
+.wp-block-paragraph:hover {
+	background: var(--wp-gs-colors-background);
+}
