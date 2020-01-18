@@ -1,6 +1,7 @@
 import React from "react";
 import {
 	StyleSystemProvider,
+	globalStylesManager,
 	useGlobalStylesSheetCssString,
 } from "./style-system";
 import { Flex, View } from "@itsjonq/elm";
@@ -11,6 +12,8 @@ const theme = {
 		text: "black",
 	},
 };
+
+window.gsm = globalStylesManager;
 
 export function Renderer1() {
 	const css = useGlobalStylesSheetCssString();
@@ -30,9 +33,29 @@ export function Renderer1() {
 									Paragraph, within custom scope styled
 									document
 								</ParagraphBlock>
+								<ParagraphBlock>
+									Paragraph, within custom scope styled
+									document
+								</ParagraphBlock>
+								<ParagraphBlock>
+									Paragraph, within custom scope styled
+									document
+								</ParagraphBlock>
+								<ParagraphBlock>
+									Paragraph, within custom scope styled
+									document
+								</ParagraphBlock>
+								<ParagraphBlock>
+									Paragraph, within custom scope styled
+									document
+								</ParagraphBlock>
 							</SomeDocumentWithCustomStyles>
 						</Flex.Block>
 						<Flex.Item width="30%">
+							<ParagraphBlock>Paragraph OUTSIDE</ParagraphBlock>
+							<ParagraphBlock>Paragraph OUTSIDE</ParagraphBlock>
+							<ParagraphBlock>Paragraph OUTSIDE</ParagraphBlock>
+							<ParagraphBlock>Paragraph OUTSIDE</ParagraphBlock>
 							<ParagraphBlock>Paragraph OUTSIDE</ParagraphBlock>
 						</Flex.Item>
 					</Flex>

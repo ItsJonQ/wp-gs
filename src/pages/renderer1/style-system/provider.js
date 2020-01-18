@@ -7,7 +7,7 @@ import {
 import { SE } from "./element";
 import { cssVariableTransform } from "../../shared";
 
-export const StyleSystemProvider = ({ children, theme = {} }) => {
+export const StyleSystemProvider = ({ as = "div", children, theme = {} }) => {
 	const styleSystemContext = useStyleSystemContext() || initialContext;
 
 	const mergedTheme = {
@@ -22,9 +22,13 @@ export const StyleSystemProvider = ({ children, theme = {} }) => {
 		variables,
 	};
 
+	const StyledElementComponent = SE[as] || SE.div;
+
 	return (
 		<StyleSystemContext.Provider value={contextProps}>
-			<SE.div css={variables}>{children}</SE.div>
+			<StyledElementComponent css={variables}>
+				{children}
+			</StyledElementComponent>
 		</StyleSystemContext.Provider>
 	);
 };

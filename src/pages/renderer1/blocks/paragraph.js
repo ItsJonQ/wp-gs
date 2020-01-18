@@ -21,6 +21,7 @@ export function ParagraphBlock(props) {
  * An example of an implementation without using StyledElement.primitive.
  */
 function ParagraphWrapper({ children, ...props }) {
+	/** Automatically resolves, css, sx, and className props */
 	const className = useStyledClassName(props);
 	return <div className={className}>{children}</div>;
 }

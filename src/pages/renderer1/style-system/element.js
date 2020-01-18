@@ -5,6 +5,8 @@ import { domElements, getCssVariableValue } from "../../shared";
 import { globalStylesManager } from "./manager";
 import { useStyleSystemContext } from "./context";
 
+const filterUnstyledClassName = css => !!css && css !== "wp-gs-0";
+
 export const useStyledClassName = ({ className, css, sx }) => {
 	let cssToCompile = [];
 	const { theme } = useStyleSystemContext();
@@ -19,26 +21,22 @@ export const useStyledClassName = ({ className, css, sx }) => {
 		}
 	}
 
-	const compiledCss = cssToCompile
-		.map(precompiledCss => {
-			try {
-				return globalStylesManager.css(precompiledCss);
-			} catch {
-				return undefined;
-			}
-		})
-		.filter(Boolean);
+	const compiledCss = cssToCompile.map(precompiledCss => {
+		try {
+			return globalStylesManager.css(precompiledCss);
+		} catch {
+			return undefined;
+		}
+	});
 
-	const classes = globalStylesManager.cx([
-		className,
-		...compiledCss,
-		themeCss,
-	]);
+	const classes = globalStylesManager.cx(
+		[className, ...compiledCss, themeCss].filter(filterUnstyledClassName)
+	);
 
-	return classes;
+	return classes || undefined;
 };
 
-const getVariableFromTheme = (theme, prop) => {
+const getVariableFromTheme = prop => {
 	const key = getCssVariableValue(prop);
 
 	return `var(${key})`;
@@ -51,7 +49,7 @@ const getCompiledThemeStyles = ({ sx, theme }) => {
 		const value = sx[key];
 		const nextValue = is.plainObject(value)
 			? getCompiledThemeStyles({ sx: value, theme })
-			: getVariableFromTheme(theme, value);
+			: getVariableFromTheme(value);
 
 		return { ...styles, [key]: nextValue };
 	}, {});
