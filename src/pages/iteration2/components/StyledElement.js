@@ -155,12 +155,11 @@ export const generatePrimitive = tagName => {
 	);
 };
 
-const styledPrimitives = domElements.reduce((collection, tagName) => {
+export const StyledElement = domElements.reduce((collection, tagName) => {
 	return {
 		...collection,
 		[tagName]: generatePrimitive(tagName),
 	};
 }, {});
 
-export const StyledElement = styledPrimitives;
 export const SE = StyledElement;

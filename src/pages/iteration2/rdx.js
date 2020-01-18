@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { get, isUndefined } from "lodash";
+import { isUndefined } from "lodash";
 import { Provider } from "react-redux";
 import { useControls, Controls } from "@itsjonq/controls";
 import { Flex, View } from "@itsjonq/elm";
@@ -14,7 +14,6 @@ import {
 	useCurrentThemeDocuments,
 	useInjectGlobalStyles,
 	usePostBlocks,
-	usePostBlockStylesData,
 	useSetDocumentStyles,
 	useSetGlobalStyles,
 	useThemeDocumentStylesCssVariables,

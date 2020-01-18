@@ -1,1 +1,1 @@
-export * from "./StyledEl";
+export * from "./StyledElement";

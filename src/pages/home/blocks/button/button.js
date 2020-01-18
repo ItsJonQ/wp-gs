@@ -9,13 +9,13 @@ import "./button.css";
 globalStyles.setProps({ button: defaultStyles });
 globalStyles.addTransformer(buttonBlockTransformer);
 
-export function ButtonBlock({ children = "Hello", ...props }) {
+export function ButtonBlock({ href = "", children = "Hello", ...props }) {
 	useButtonControls();
 
 	return (
 		<div className="wp-block-buttons" {...props}>
 			<div className="wp-block-button">
-				<a href="#" className="wp-block-button__link">
+				<a href={href} tabIndex={0} className="wp-block-button__link">
 					{children}
 				</a>
 			</div>

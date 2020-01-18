@@ -27,5 +27,6 @@
 
 .wp-block-button a {
 	color: currentColor;
+	outline: none;
 	text-decoration: none;
 }
