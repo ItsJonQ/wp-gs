@@ -1,5 +1,5 @@
 import React from "react";
-import { SE, useStyledClassName } from "../style-system";
+import { SE, useStyledClassName } from "../../style-system";
 import "./paragraph.css";
 
 export function ParagraphBlock(props) {

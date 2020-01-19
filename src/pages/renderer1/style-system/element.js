@@ -1,8 +1,13 @@
 import React from "react";
 import isPropValid from "@emotion/is-prop-valid";
 import { is } from "@itsjonq/is";
-import { domElements, getCssVariableValue } from "../../shared";
+import {
+	domElements,
+	getCssVariableValue,
+	cssVariableTransform,
+} from "../../shared";
 import { globalStylesManager } from "./manager";
+import { useSetBlockProps } from "./root-context";
 import { useStyleSystemContext } from "./context";
 
 const filterUnstyledClassName = css => !!css && css !== "wp-gs-0";
@@ -34,6 +39,21 @@ export const useStyledClassName = ({ className, css, sx }) => {
 	);
 
 	return classes || undefined;
+};
+
+export const useRegisterBlockCssProperties = ({ bx }) => {
+	const setBlockProps = useSetBlockProps();
+	if (!bx) return;
+
+	setBlockProps(bx);
+
+	const globalCss = globalStylesManager.css(cssVariableTransform(bx));
+	/**
+	 * Currently a hack to inject the styles globally
+	 * Ideally, there should be a mechanism that injects the Emotion generated
+	 * global defaults to :root
+	 */
+	document.documentElement.classList.add(globalCss);
 };
 
 const getVariableFromTheme = prop => {
@@ -68,8 +88,9 @@ const sanitizeProps = props => {
 };
 
 const createStyledElement = tag => {
-	return React.forwardRef(({ className, css, sx, ...props }, ref) => {
+	return React.forwardRef(({ className, css, sx, bx, ...props }, ref) => {
 		const classes = useStyledClassName({ className, css, sx });
+		useRegisterBlockCssProperties({ bx });
 
 		return React.createElement(tag, {
 			...sanitizeProps(props),
