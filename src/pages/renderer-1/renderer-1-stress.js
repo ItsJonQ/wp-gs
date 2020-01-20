@@ -10,7 +10,7 @@ import {
 } from "./style-system";
 
 const ITEM_COUNT = 100;
-const TIMEOUT_DURATION = 100;
+const TIMEOUT_DURATION = 16;
 
 /**
  * This experiment combines concepts from Emotion (internals) and Theme-UI spec.
