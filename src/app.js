@@ -5,7 +5,7 @@ import { Home } from "./pages/home";
 import { Visualizer } from "./pages/v";
 import { Visualizer2 } from "./pages/v2";
 import { Iteration2 } from "./pages/iteration2";
-import { Renderer1 } from "./pages/renderer1";
+import { Renderer1, Renderer1Stress } from "./pages/renderer-1";
 
 export function App() {
 	return (
@@ -14,6 +14,7 @@ export function App() {
 			<Route path="/v/:id?" exact component={Visualizer} />
 			<Route path="/i2" component={Iteration2} />
 			<Route path="/r1" component={Renderer1} />
+			<Route path="/r1-stress" component={Renderer1Stress} />
 			<Route path="/" component={Home} />
 		</Router>
 	);

@@ -5,6 +5,7 @@ import {
 	globalStylesManager,
 	useGlobalStylesSheetCssString,
 } from "./style-system";
+import { StatsGraph } from "@helpscout/stats";
 import { Flex, View } from "@itsjonq/elm";
 import { ParagraphBlock, CardBlock } from "./blocks";
 
@@ -18,8 +19,10 @@ window.gsm = globalStylesManager;
 
 export function Renderer1() {
 	const css = useGlobalStylesSheetCssString();
+
 	return (
 		<RootStyleSystemProvider>
+			<StatsGraph />
 			<StyleSystemProvider theme={theme}>
 				<View maxWidth={720} padding={20} margin="auto">
 					<h3>Scope Test</h3>

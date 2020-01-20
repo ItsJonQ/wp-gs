@@ -1032,6 +1032,11 @@
   dependencies:
     "@hapi/hoek" "^8.3.0"
 
+"@helpscout/stats@0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@helpscout/stats/-/stats-0.0.5.tgz#37a22f25ec3a8c409106139a8ac34c706f34ddd9"
+  integrity sha512-Amh8AVMQwropQR35am5QdkMDDnqHTTsJiC9qZWw98H3RMf0lTtsXMcncGNbqO1yrknfLB51yQMg10c7zEqHFnQ==
+
 "@icons/material@^0.2.4":
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
