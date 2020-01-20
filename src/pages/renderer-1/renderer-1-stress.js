@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { StatsGraph } from "@helpscout/stats";
 import colorize from "tinycolor2";
@@ -17,7 +17,7 @@ const TIMEOUT_DURATION = 16;
  */
 
 export function Renderer1Stress() {
-	const { counter, enableTick, tick, toggleTick } = useUpdateTick(false);
+	const { enableTick, tick, toggleTick } = useUpdateTick(false);
 	const [scoping, setScoping] = useState(false);
 
 	const getStyle = () => {
@@ -131,19 +131,15 @@ export function Renderer1Stress() {
 
 function useUpdateTick(initialState = false) {
 	const [tick, setTick] = useState(initialState);
-	const [counter, setCounter] = useState(0);
 	const timeRef = useRef();
 	const [enableTick, setEnableTick] = useState(initialState);
-
-	const updateTick = useCallback(() => {
-		setCounter(counter + 1);
-		setTick(!tick);
-	}, [counter, tick]);
 
 	useEffect(() => {
 		if (timeRef.current) {
 			window.clearTimeout(timeRef.current);
 		}
+
+		const updateTick = () => setTick(!tick);
 
 		if (enableTick) {
 			timeRef.current = window.setTimeout(
@@ -157,17 +153,11 @@ function useUpdateTick(initialState = false) {
 				window.clearTimeout(timeRef.current);
 			}
 		};
-	}, [enableTick, tick, timeRef, updateTick]);
-
-	useEffect(() => {
-		if (!enableTick) {
-			setCounter(0);
-		}
-	}, [enableTick]);
+	}, [enableTick, tick, timeRef]);
 
 	const toggleTick = () => setEnableTick(!enableTick);
 
-	return { counter, tick, enableTick, toggleTick };
+	return { tick, enableTick, toggleTick };
 }
 
 const RandomStyledComponent = styled.div`
