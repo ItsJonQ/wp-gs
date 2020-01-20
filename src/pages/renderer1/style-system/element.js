@@ -1,11 +1,7 @@
 import React from "react";
 import isPropValid from "@emotion/is-prop-valid";
 import { is } from "@itsjonq/is";
-import {
-	domElements,
-	getCssVariableValue,
-	cssVariableTransform,
-} from "../../shared";
+import { domElements, getCssVariableValue } from "../../shared";
 import { globalStylesManager } from "./manager";
 import { useSetBlockProps } from "./root-context";
 import { useStyleSystemContext } from "./context";
@@ -46,14 +42,6 @@ export const useRegisterBlockCssProperties = ({ bx }) => {
 	if (!bx) return;
 
 	setBlockProps(bx);
-
-	const globalCss = globalStylesManager.css(cssVariableTransform(bx));
-	/**
-	 * Currently a hack to inject the styles globally
-	 * Ideally, there should be a mechanism that injects the Emotion generated
-	 * global defaults to :root
-	 */
-	document.documentElement.classList.add(globalCss);
 };
 
 const getVariableFromTheme = prop => {

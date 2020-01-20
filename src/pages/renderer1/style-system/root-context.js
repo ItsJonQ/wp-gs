@@ -1,8 +1,15 @@
-import React, { useReducer, createContext, useCallback } from "react";
+import React, {
+	useEffect,
+	useReducer,
+	createContext,
+	useCallback,
+} from "react";
 import merge from "deepmerge";
 import equals from "fast-deep-equal";
+import { globalStylesManager } from "./manager";
+import { cssVariableTransform } from "../../shared";
 
-export const initialContext = {};
+export const initialContext = { className: "", theme: {} };
 
 export const RootStyleSystemStateContext = createContext(initialContext);
 export const RootStyleSystemDispatchContext = createContext(initialContext);
@@ -10,7 +17,7 @@ export const RootStyleSystemDispatchContext = createContext(initialContext);
 const rootStyleSystemReducer = (state, action) => {
 	switch (action.type) {
 		case "SET_BLOCK_PROPS":
-			const nextState = merge(state, { ...action.payload.props });
+			const nextState = merge(state, { ...action.payload });
 			if (!equals(state, nextState)) {
 				return nextState;
 			}
@@ -25,6 +32,13 @@ export const RootStyleSystemProvider = ({ children }) => {
 		rootStyleSystemReducer,
 		initialContext
 	);
+	const htmlClassName = state.className;
+
+	useEffect(() => {
+		if (document.documentElement && htmlClassName) {
+			document.documentElement.classList.add(htmlClassName);
+		}
+	}, [htmlClassName]);
 
 	return (
 		<RootStyleSystemStateContext.Provider value={state}>
@@ -48,8 +62,14 @@ export const useRootStyleSystem = () => [
 export const useSetBlockProps = () => {
 	const dispatch = useRootStyleSystemDispatch();
 	const setBlockProps = useCallback(
-		props => {
-			dispatch({ type: "SET_BLOCK_PROPS", payload: { props } });
+		(theme = {}) => {
+			const className = globalStylesManager.css(
+				cssVariableTransform(theme)
+			);
+			dispatch({
+				type: "SET_BLOCK_PROPS",
+				payload: { className, theme },
+			});
 		},
 		[dispatch]
 	);
