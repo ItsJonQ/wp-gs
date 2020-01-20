@@ -1,6 +1,6 @@
 import React from "react";
 import {
-	initialContext,
+	initialStyleSystemContext,
 	useStyleSystemContext,
 	StyleSystemContext,
 } from "./context";
@@ -8,7 +8,8 @@ import { SE } from "./element";
 import { cssVariableTransform } from "../../shared";
 
 export const StyleSystemProvider = ({ as = "div", children, theme = {} }) => {
-	const styleSystemContext = useStyleSystemContext() || initialContext;
+	const styleSystemContext =
+		useStyleSystemContext() || initialStyleSystemContext;
 
 	const mergedTheme = {
 		...styleSystemContext.theme,

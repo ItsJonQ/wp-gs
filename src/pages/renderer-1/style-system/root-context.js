@@ -10,10 +10,14 @@ import equals from "fast-deep-equal";
 import { globalStylesManager } from "./manager";
 import { cssVariableTransform } from "../../shared";
 
-export const initialContext = { className: "", theme: {} };
+const initialRootStyleSystemContext = { className: "", theme: {} };
 
-export const RootStyleSystemStateContext = createContext(initialContext);
-export const RootStyleSystemDispatchContext = createContext(initialContext);
+export const RootStyleSystemStateContext = createContext(
+	initialRootStyleSystemContext
+);
+export const RootStyleSystemDispatchContext = createContext(
+	initialRootStyleSystemContext
+);
 
 const rootStyleSystemReducer = (state, action) => {
 	switch (action.type) {
@@ -31,7 +35,7 @@ const rootStyleSystemReducer = (state, action) => {
 export const RootStyleSystemProvider = ({ children }) => {
 	const [state, dispatch] = useReducer(
 		rootStyleSystemReducer,
-		initialContext
+		initialRootStyleSystemContext
 	);
 	const htmlClassName = state.className;
 

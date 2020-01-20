@@ -1,5 +1,7 @@
 import React from "react";
 
-export const initialContext = { theme: {} };
-export const StyleSystemContext = React.createContext(initialContext);
+export const initialStyleSystemContext = { theme: {} };
+export const StyleSystemContext = React.createContext(
+	initialStyleSystemContext
+);
 export const useStyleSystemContext = () => React.useContext(StyleSystemContext);
