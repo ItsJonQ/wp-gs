@@ -3,7 +3,6 @@ import isPropValid from "@emotion/is-prop-valid";
 import { is } from "@itsjonq/is";
 import { domElements, getCssVariableValue } from "../../shared";
 import { globalStylesManager } from "./manager";
-import { useSetBlockProps } from "./root-context";
 import { useStyleSystemContext } from "./context";
 
 const filterUnstyledClassName = css => !!css && css !== "wp-gs-0";
@@ -35,13 +34,6 @@ export const useStyledClassName = ({ className, css, sx }) => {
 	);
 
 	return classes || undefined;
-};
-
-export const useRegisterBlockCssProperties = ({ bx }) => {
-	const setBlockProps = useSetBlockProps();
-	if (!bx) return;
-
-	setBlockProps(bx);
 };
 
 const getVariableFromTheme = prop => {
@@ -76,9 +68,8 @@ const sanitizeProps = props => {
 };
 
 const createStyledElement = tag => {
-	return React.forwardRef(({ className, css, sx, bx, ...props }, ref) => {
+	return React.forwardRef(({ className, css, sx, ...props }, ref) => {
 		const classes = useStyledClassName({ className, css, sx });
-		useRegisterBlockCssProperties({ bx });
 
 		return React.createElement(tag, {
 			...sanitizeProps(props),

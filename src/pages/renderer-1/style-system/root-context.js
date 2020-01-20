@@ -1,4 +1,5 @@
 import React, {
+	useRef,
 	useEffect,
 	useReducer,
 	createContext,
@@ -81,4 +82,15 @@ export const useBlockProps = () => {
 	const state = useRootStyleSystemState();
 
 	return state;
+};
+
+export const useRegisterBlockCssProperties = bx => {
+	const didRegisterRef = useRef();
+	const setBlockProps = useSetBlockProps();
+
+	if (!bx) return;
+	if (didRegisterRef.current) return;
+
+	setBlockProps(bx);
+	didRegisterRef.current = true;
 };

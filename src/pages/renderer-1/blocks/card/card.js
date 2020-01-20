@@ -1,5 +1,5 @@
 import React from "react";
-import { SE } from "../../style-system";
+import { SE, useRegisterBlockCssProperties } from "../../style-system";
 
 const css = {
 	border: "1px solid",
@@ -8,7 +8,6 @@ const sx = {
 	borderColor: "card.borderColor",
 	background: "card.background",
 	borderRadius: "card.borderRadius",
-	padding: "card.padding",
 	color: "card.text",
 };
 
@@ -29,9 +28,11 @@ const bx = {
 };
 
 export function CardBlock({ children }) {
+	useRegisterBlockCssProperties(bx);
+
 	return (
-		<SE.div css={css} sx={sx} bx={bx}>
-			{children}
+		<SE.div css={css} sx={sx}>
+			<SE.div sx={{ padding: "card.padding" }}>{children}</SE.div>
 		</SE.div>
 	);
 }
