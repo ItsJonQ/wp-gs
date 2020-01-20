@@ -43,6 +43,10 @@ export function Renderer1Stress() {
 		color: "white",
 	};
 
+	const totalGeneratedClassNames = Object.keys(
+		globalStylesManager.cache.inserted
+	).length;
+
 	return (
 		<RootStyleSystemProvider>
 			<StyleSystemProvider theme={theme}>
@@ -64,7 +68,7 @@ export function Renderer1Stress() {
 						{" || "}
 						(Scope: Black)
 						{" || "}
-						{`(Update Count: ${counter * 100})`}
+						{`(Update Count: ${totalGeneratedClassNames})`}
 						{" || "}
 						{`(Update Every: ${TIMEOUT_DURATION / 1000}ms)`}
 					</div>
